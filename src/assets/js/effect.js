@@ -1,7 +1,7 @@
-﻿import Vue  from 'vue'
+﻿// import Vue  from 'vue'
 
 /*
- $("document").ready(function () {//高度判断
+$("document").ready(function () {//高度判断
  var contentHeight;
  var numListHeight;//拨号显示区
  var moduleListHeight;//设备显示区
@@ -40,7 +40,7 @@
  }
  })
  })*/
-  /* $("document").ready(function (){
+/* $("document").ready(function (){
 
    function ui(item,activeStyle,normalStyle) {
      $(item).onmousedown(function(){
@@ -54,8 +54,6 @@
 
     }
   ) */
-
-
 function menu() {
   $(".span_large").click(function () {
     $(this).toggleClass("span_largeSelected");
