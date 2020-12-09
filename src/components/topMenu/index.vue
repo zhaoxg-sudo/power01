@@ -16,23 +16,17 @@
 </template>
 
 <script>
-  import routes from 'router'
-  export default {
-    data() {
-      return {
-        menuList: []
-      }
-    },
-    created() {
-      this.menuList = routes.options.routes[2].children
+
+export default {
+  data () {
+    return {
+      menuList: []
     }
+  },
+  created () {
   }
+}
 </script>
 
-<style type="text/scss" rel="stylesheet/scss" lang="scss">
-  .menubanner {
-    .headMenuList li {
-      cursor: pointer;
-    }
-  }
+<style >
 </style>
