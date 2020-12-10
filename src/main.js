@@ -7,6 +7,7 @@ import store from 'store'
 import axios from 'axios'
 import VueSocketio from 'vue-socket.io'
 
+<<<<<<< HEAD
 import './assets/css/bootstrap.css'
 // 引入 font-awesome
 import './assets/css/font-awesome.css'
@@ -23,6 +24,8 @@ import './assets/css/setting.css'
 // 2.动态高度
 // import './assets/js/effect.js'
 
+=======
+>>>>>>> b3afac777000d30d9839a3c4a9e37bc76dabbffa
 Vue.use(new VueSocketio({
 
   debug: true,
