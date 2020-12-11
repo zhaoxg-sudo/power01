@@ -7,7 +7,6 @@ import store from 'store'
 import axios from 'axios'
 import VueSocketio from 'vue-socket.io'
 
-<<<<<<< HEAD
 import './assets/css/bootstrap.css'
 // 引入 font-awesome
 import './assets/css/font-awesome.css'
@@ -24,13 +23,11 @@ import './assets/css/setting.css'
 // 2.动态高度
 // import './assets/js/effect.js'
 
-=======
->>>>>>> b3afac777000d30d9839a3c4a9e37bc76dabbffa
 Vue.use(new VueSocketio({
 
   debug: true,
 
-  connection: 'http://127.0.0.1:7001'
+  connection: 'http://power.ieyeplus.com:7001'
 
 }))
 Vue.prototype.$ajax = axios
@@ -46,7 +43,7 @@ new Vue({
   template: '<App/>',
   sockets: {
     connect: function () {
-      console.log('socket has connected++++++++++++++++++++++++++++++++++++\n')
+      console.log('websocket has connected++++++++++++++++++++++++++++++++++++\n')
     }
   }
 })

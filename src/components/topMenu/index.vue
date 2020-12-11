@@ -28,5 +28,10 @@ export default {
 }
 </script>
 
-<style >
+<style type="text/scss" rel="stylesheet/scss" lang="scss">
+  .menubanner {
+    .headMenuList li {
+      cursor: pointer;
+    }
+  }
 </style>

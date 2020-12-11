@@ -2,23 +2,34 @@
   <div>
       <topMenu></topMenu>
       <container></container>
+      <treeList @refresh = "refresh"> </treeList>
       <h1>{{msg}}</h1>
+      <h2>{{devicelist}}</h2>
+      <footNav  :username = "username"></footNav>
   </div>
 </template>
 
 <script>
 import topMenu from './topMenu/index.vue'
 import container from './container/index.vue'
+import footNav from './footNav/index.vue'
+import treeList from './treeList/index.vue'
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: '还没收到websockt数据'
+      msg: '还没收到websockt数据',
+      devicelist: [],
+      instance: this.$ajax.create({
+        baseURL: 'http://power.ieyeplus.com:7001/'
+      })
     }
   },
   components: {
     'topMenu': topMenu,
-    'container': container
+    'container': container,
+    'footNav': footNav,
+    'treeList': treeList
   },
   created () {
     let _this = this
@@ -26,6 +37,22 @@ export default {
       this.sockets.subscribe('alarm', (data) => {
         console.log(data)
         _this.msg = data
+      })
+      this.instance({
+        'url': 'localall',
+        'method': 'get'
+      }).then((res) => {
+        console.log('\npower local device db:')
+        console.log(res.data)
+        if (res.data) {
+          res.data.forEach((num) => {
+            this.devicelist.push(num)
+            // console.log(num.dianum)
+            // console.log(this.video_link_list)
+          })
+          console.log('\npower local device table')
+          console.log(this.devicelist)
+        }
       })
     })
   }
@@ -36,6 +63,7 @@ export default {
 <style scoped>
 h1, h2 {
   font-weight: normal;
+  height: 200px;
 }
 ul {
   list-style-type: none;
