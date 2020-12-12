@@ -6,7 +6,7 @@
       highlight-current
       :props="defaultProps"
       :default-expanded-keys="defaultExpanded"
-      node-key="organizationid"
+      node-key="name"
       @node-click="handleNodeClick"
       :expand-on-click-node="false"
       :render-content="renderContent"
@@ -26,16 +26,18 @@ export default {
       defaultExpanded: [],
       defaultProps: {
         children: 'Children',
-        label: 'orgname'
+        label: 'name'
       }
     }
   },
   computed: {
     ...mapGetters({
+      // get_user_info: GET_USER_INFO,
     })
   },
   created () {
     this.$nextTick(function () {
+      this.refresh()
     })
   },
   methods: {
@@ -44,6 +46,22 @@ export default {
       'setInitData'
     ]),
     refresh () {
+      this.$ajax.get('http://power.ieyeplus.com:7001/' + 'localall')
+        .then((res) => {
+          let data = res.data
+          this.data = data
+          console.log(data[0]['name'])
+          // 初始化树对象
+          this.TreeChange({data: data[0], node: {}})
+            .then((res) => { console.log(res) })
+          //  循环出默认展开项的ID
+          for (let i in data) {
+            this.defaultExpanded.push(data[i]['name'])
+          }
+          this.$nextTick(() => {
+            this.$refs.tree.$children[0].$el.className = this.$refs.tree.$children[0].$el.className + ' ' + 'is-current'
+          })
+        })
     },
     handleNodeClick (data, node, event) {
       console.log(node.label, data.orgname)

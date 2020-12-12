@@ -51,7 +51,8 @@ export default {
       caonima: null,
       enable_leftwatcher: false,
       enable_mobile: false,
-      leftwatcher: ''
+      leftwatcher: '',
+      mobile: ''
     }
   },
   created () {

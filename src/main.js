@@ -4,7 +4,10 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from 'store'
+import ElementUI from 'element-ui'
 import axios from 'axios'
+// 导入JQ
+// import $ from 'jquery'
 import VueSocketio from 'vue-socket.io'
 
 import './assets/css/bootstrap.css'
@@ -23,6 +26,7 @@ import './assets/css/setting.css'
 // 2.动态高度
 // import './assets/js/effect.js'
 
+Vue.use(ElementUI)
 Vue.use(new VueSocketio({
 
   debug: true,

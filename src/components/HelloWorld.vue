@@ -2,10 +2,11 @@
   <div>
       <topMenu></topMenu>
       <container></container>
-      <treeList @refresh = "refresh"> </treeList>
       <h1>{{msg}}</h1>
       <h2>{{devicelist}}</h2>
       <footNav  :username = "username"></footNav>
+      <switchLeft></switchLeft>
+      <treeList></treeList>
   </div>
 </template>
 
@@ -13,6 +14,7 @@
 import topMenu from './topMenu/index.vue'
 import container from './container/index.vue'
 import footNav from './footNav/index.vue'
+import switchLeft from './switchLeft/index.vue'
 import treeList from './treeList/index.vue'
 export default {
   name: 'HelloWorld',
@@ -20,6 +22,7 @@ export default {
     return {
       msg: '还没收到websockt数据',
       devicelist: [],
+      username: '',
       instance: this.$ajax.create({
         baseURL: 'http://power.ieyeplus.com:7001/'
       })
@@ -29,10 +32,12 @@ export default {
     'topMenu': topMenu,
     'container': container,
     'footNav': footNav,
+    'switchLeft': switchLeft,
     'treeList': treeList
   },
   created () {
     let _this = this
+    this.username = 'power'
     this.$nextTick(async () => {
       this.sockets.subscribe('alarm', (data) => {
         console.log(data)

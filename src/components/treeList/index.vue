@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import tree from './tree.vue'
 // import {getHeights} from 'utils/page/ipBroad'
 export default {
@@ -19,6 +20,15 @@ export default {
   watch: {
   },
   methods: {
+    close () {
+      $('.orgTreeList').removeClass('treeListShow').addClass('treeListHide')
+    },
+    removeAll () {
+      $('#end').html('')
+    },
+    click () {
+      this.$emit('refresh')
+    }
   }
 }
 </script>

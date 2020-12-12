@@ -4,13 +4,14 @@
 </template>
 
 <script>
-  export default {
-    methods: {
-      open() {
-        $(".orgTreeList").removeClass("treeListHide").addClass("treeListShow");
-      }
+import $ from 'jquery'
+export default {
+  methods: {
+    open () {
+      $('.orgTreeList').removeClass('treeListHide').addClass('treeListShow')
     }
   }
+}
 </script>
 
 <style type="text/scss" rel="stylesheet/scss" lang="scss">
