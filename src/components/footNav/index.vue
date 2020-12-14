@@ -16,7 +16,7 @@
       <el-tooltip :content="mobile" placement="top" :disabled="mobile == ''">
       <div :class="this.enable_mobile == false?'':'fa fa-mobile fa-2x'"></div>
       </el-tooltip>
-      <div :class="this.vertoClose==0?'':'location_indicator'"></div>
+      <div></div>
     </div>
     <div class="audio-box" style="top: 5px;">
        <audio ref="audio" ></audio>
@@ -52,7 +52,8 @@ export default {
       enable_leftwatcher: false,
       enable_mobile: false,
       leftwatcher: '',
-      mobile: ''
+      mobile: '',
+      selectPhonex: null
     }
   },
   created () {

@@ -15,7 +15,6 @@
     "element-ui": "^1.4.13",
     "jquery": "^3.5.1",
     "nprogress": "^0.2.0",
-    "store": "^2.0.12",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^3.0.10",

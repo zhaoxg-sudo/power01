@@ -64,7 +64,8 @@ export default {
         })
     },
     handleNodeClick (data, node, event) {
-      console.log(node.label, data.orgname)
+      console.log('node click 事件.................................')
+      console.log(node.label, data.name)
       if (event) { // 判断点击的是否为默认选中的树节点，如果不是，取消默认选中
         if (node.id !== this.$refs.tree.$children[0].node.id) {
           this.$refs.tree.$children[0].$el.className = 'el-tree-node'
