@@ -1,8 +1,10 @@
 <template>
   <div>
+    <div id="media">
+      <video width=800 id="webcam" autoplay="autoplay" hidden="true"></video>
+    </div>
       <topMenu></topMenu>
       <container></container>
-      <h1>{{msg}}</h1>
       <h2>{{devicelist}}</h2>
       <footNav  :username = "username"></footNav>
       <switchLeft></switchLeft>
@@ -68,7 +70,6 @@ export default {
 <style scoped>
 h1, h2 {
   font-weight: normal;
-  height: 200px;
 }
 ul {
   list-style-type: none;

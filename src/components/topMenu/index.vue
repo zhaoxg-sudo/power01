@@ -16,7 +16,7 @@
 </template>
 
 <script>
-
+import routes from '../../router'
 export default {
   data () {
     return {
@@ -24,6 +24,7 @@ export default {
     }
   },
   created () {
+    this.menuList = routes.options.routes[0].children
   }
 }
 </script>
