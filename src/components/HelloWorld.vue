@@ -1,11 +1,10 @@
 <template>
   <div>
-    <div id="media">
-      <video width=800 id="webcam" autoplay="autoplay" hidden="true"></video>
-    </div>
+      <div id="media">
+        <video width=800 id="webcam" autoplay="autoplay" hidden="true"></video>
+      </div>
       <topMenu></topMenu>
       <container></container>
-      <h2>{{devicelist}}</h2>
       <footNav  :username = "username"></footNav>
       <switchLeft></switchLeft>
       <treeList></treeList>
@@ -13,6 +12,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import topMenu from './topMenu/index.vue'
 import container from './container/index.vue'
 import footNav from './footNav/index.vue'
@@ -41,6 +41,7 @@ export default {
     let _this = this
     this.username = 'power'
     this.$nextTick(async () => {
+      this.getHeights()
       this.sockets.subscribe('alarm', (data) => {
         console.log(data)
         _this.msg = data
@@ -62,6 +63,16 @@ export default {
         }
       })
     })
+  },
+  methods: {
+    getHeights () {
+    //  高度判断
+      //  var contentHeight = $(window).height() - 350
+      var menuHeight = $('.menubanner').outerHeight()
+      //  $('.content').height(contentHeight)
+      $('.orgTreeList').css('top', menuHeight)
+      $('.openTreeList').css('top', menuHeight)
+    }
   }
 }
 </script>

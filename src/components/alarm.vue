@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 export default {
   name: 'alarm',
   data () {
@@ -15,10 +16,21 @@ export default {
   created () {
     let _this = this
     this.$nextTick(async () => {
+      this.getHeights()
       this.sockets.subscribe('alarm', (data) => {
         _this.msg = data
       })
     })
+  },
+  methods: {
+    getHeights () {
+    //  高度判断
+      var contentHeight = $(window).height() - 120
+      var menuHeight = $('.menubanner').outerHeight()
+      $('.content').height(contentHeight)
+      $('.orgTreeList').css('top', menuHeight)
+      $('.openTreeList').css('top', menuHeight)
+    }
   }
 }
 </script>
@@ -26,11 +38,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 div {
-  height: 500px;
-  width: 99%;
-  border: 25px solid red;
-  padding: 25px;
-  margin: 25px;
+  border: 5px solid red;
+  padding: 0;
+  margin: 0;
 }
 h1, h2 {
   font-weight: normal;
