@@ -1,8 +1,5 @@
 <template>
   <div>
-      <div id="media">
-        <video width=800 id="webcam" autoplay="autoplay" hidden="true"></video>
-      </div>
       <topMenu></topMenu>
       <container></container>
       <footNav  :username = "username"></footNav>
@@ -67,9 +64,7 @@ export default {
   methods: {
     getHeights () {
     //  高度判断
-      //  var contentHeight = $(window).height() - 350
       var menuHeight = $('.menubanner').outerHeight()
-      //  $('.content').height(contentHeight)
       $('.orgTreeList').css('top', menuHeight)
       $('.openTreeList').css('top', menuHeight)
     }

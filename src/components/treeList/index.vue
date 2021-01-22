@@ -22,6 +22,10 @@ export default {
   methods: {
     close () {
       $('.orgTreeList').removeClass('treeListShow').addClass('treeListHide')
+      console.log('点击了:返回树箭头，树缩回')
+      var contentWidth = $(window).width()
+      $('.content').css('left', 0)
+      $('.content').width(contentWidth - 10)
     },
     removeAll () {
       $('#end').html('')
