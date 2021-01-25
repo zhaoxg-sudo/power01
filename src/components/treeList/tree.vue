@@ -6,9 +6,9 @@
       highlight-current
       :props="defaultProps"
       :default-expanded-keys="defaultExpanded"
-      node-key="name"
+      node-key="id"
       @node-click="handleNodeClick"
-      :expand-on-click-node="false"
+      :expand-on-click-node="true"
       :render-content="renderContent"
     >
     </el-tree>
@@ -22,10 +22,79 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      data: [],
+      data: [
+        {
+          id: 1,
+          name: '一级 1',
+          children: [
+            {
+              id: 11,
+              name: '二级 1-1',
+              children: [
+                {
+                  id: 111,
+                  name: '三级 1-1-1'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 2,
+          name: '一级 2',
+          children: [
+            {
+              id: 21,
+              name: '二级 2-1',
+              children: [
+                {
+                  id: 211,
+                  name: '三级 2-1-1'
+                }
+              ]
+            },
+            {
+              id: 22,
+              name: '二级 2-2',
+              children: [
+                {
+                  id: 221,
+                  name: '三级 2-2-1'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 3,
+          name: '一级 3',
+          children: [
+            {
+              id: 31,
+              name: '二级 3-1',
+              children: [
+                {
+                  id: 311,
+                  name: '三级 3-1-1'
+                }
+              ]
+            },
+            {
+              id: 32,
+              name: '二级 3-2',
+              children: [
+                {
+                  id: 321,
+                  name: '三级 3-2-1'
+                }
+              ]
+            }
+          ]
+        }
+      ],
       defaultExpanded: [],
       defaultProps: {
-        children: 'Children',
+        children: 'children',
         label: 'name'
       }
     }
@@ -49,7 +118,8 @@ export default {
       this.$ajax.get('http://power.ieyeplus.com:7001/' + 'localall')
         .then((res) => {
           let data = res.data
-          this.data = data
+          data = this.data
+          // this.data = data
           console.log(data[0]['name'])
           // 初始化树对象
           this.TreeChange({data: data[0], node: {}})
@@ -65,7 +135,7 @@ export default {
     },
     handleNodeClick (data, node, event) {
       console.log('node click 事件.................................')
-      console.log(node.label, data.name)
+      console.log(node.id, data.name)
       if (event) { // 判断点击的是否为默认选中的树节点，如果不是，取消默认选中
         if (node.id !== this.$refs.tree.$children[0].node.id) {
           this.$refs.tree.$children[0].$el.className = 'el-tree-node'

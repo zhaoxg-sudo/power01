@@ -38,7 +38,7 @@ export default {
     let _this = this
     this.username = 'power'
     this.$nextTick(async () => {
-      this.getHeights()
+      this.getHeightsWidths()
       this.sockets.subscribe('alarm', (data) => {
         console.log(data)
         _this.msg = data
@@ -62,11 +62,23 @@ export default {
     })
   },
   methods: {
-    getHeights () {
+    getHeightsWidths () {
     //  高度判断
+      var contentHeight = $(window).height() - 120
       var menuHeight = $('.menubanner').outerHeight()
+      $('.content').height(contentHeight)
       $('.orgTreeList').css('top', menuHeight)
       $('.openTreeList').css('top', menuHeight)
+      if ($('.orgTreeList').hasClass('treeListShow')) {
+        var contentWidth = $(window).width()
+        var treeWidth = $('.orgTreeList').width()
+        $('.content').css('left', treeWidth)
+        $('.content').width(contentWidth - treeWidth - 10)
+      } else {
+        var contentWidths = $(window).width()
+        $('.content').css('left', 0)
+        $('.content').width(contentWidths - 10)
+      }
     }
   }
 }
