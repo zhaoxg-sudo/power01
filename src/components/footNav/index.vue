@@ -5,6 +5,7 @@
         <span>您好 {{username}}<a @click="logout()"> [退出]</a>
           <a @click="setting()"><i class="fa fa-cogs"></i>系统设置</a>
 <a @click="$router.go(0)"><i class="fa fa-refresh"></i>刷新页面</a>
+          &nbsp;  &nbsp;&nbsp; copyright@北京三合云海科技有限责任公司  &nbsp;&nbsp; v0.5.1
         </span>
       </div>
     </div>

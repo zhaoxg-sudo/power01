@@ -10,7 +10,7 @@ import axios from 'axios'
 // import $ from 'jquery'
 import VueSocketio from 'vue-socket.io'
 // 引入element ui tree css
-import 'element-ui/lib/theme-chalk/tree.css'
+import 'element-ui/lib/theme-chalk/index.css'
 // 引入bootstrap css
 import './assets/css/bootstrap.css'
 // 引入 font-awesome
