@@ -67,7 +67,10 @@ export default {
   },
   methods: {
     ...mapActions({
-    })
+    }),
+    setting () {
+      this.$router.push('/setting')
+    }
   }
 }
 </script>
