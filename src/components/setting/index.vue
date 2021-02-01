@@ -36,6 +36,7 @@ export default {
       router.forEach((r, i) => {
         if (r.name === '系统设置') {
           this.routerList = r.children
+          console.log('setting router:', this.routerList)
         }
       })
     })

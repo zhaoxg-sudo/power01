@@ -35,10 +35,11 @@ const router = new Router({
     {
       path: '/setting',
       name: '系统设置',
+      // redirect: '/setting/userManage/index',
       component: setting,
       children: [
         {
-          path: 'setting/userManage',
+          path: '/setting/userManage/index',
           name: '站点管理',
           component: treeManager
         }

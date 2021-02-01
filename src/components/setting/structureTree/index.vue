@@ -2,13 +2,13 @@
   <div class="dept">
     <el-tree
       ref="tree"
-      :data="data"
+      :data="treeData"
       highlight-current
       :props="defaultProps"
       :default-expanded-keys="defaultExpanded"
       @node-click="handleNodeClick"
-      node-key="organizationid"
-      :expand-on-click-node="false"
+      node-key="label"
+      :expand-on-click-node="true"
       :render-content="renderContent"
     >
     </el-tree>
@@ -46,11 +46,24 @@ export default {
   },
   data () {
     return {
-      data: [],
+      data: [
+        {'catalogId': 58, 'parentId': -1, 'name': '棋盘梁隧道1'},
+        {'catalogId': 59, 'parentId': 58, 'name': '南向局端直流电源1'},
+        {'catalogId': 60, 'parentId': 59, 'name': '南向远端1'},
+        {'catalogId': 61, 'parentId': 59, 'name': '南向远端2'},
+        {'catalogId': 62, 'parentId': 59, 'name': '南向远端3'},
+        {'catalogId': 63, 'parentId': 59, 'name': '南向远端4'},
+        {'catalogId': 64, 'parentId': 58, 'name': '北向局端直流电源2'},
+        {'catalogId': 65, 'parentId': 64, 'name': '北向远端1'},
+        {'catalogId': 66, 'parentId': 64, 'name': '北向远端2'},
+        {'catalogId': 67, 'parentId': -1, 'name': '太子城隧道2'},
+        {'catalogId': 68, 'parentId': 67, 'name': '局端交流电源1'}
+      ],
+      treeData: [],
       defaultExpanded: [],
       defaultProps: {
-        children: 'Children',
-        label: 'orgname'
+        children: 'children',
+        label: 'label'
       }
     }
   },
@@ -70,15 +83,19 @@ export default {
       'setInitData'
     ]),
     refresh () {
-      this.$ajax.get('https://scc.ieyeplus.com:8443/IpBc/' + 'Organization/Data/' + this.get_user_info.user.organizationid)
+      this.$ajax.get('http://power.ieyeplus.com:7001/' + 'localall')
         .then((res) => {
-          let data = res.data.result
-          this.data = data
+          this.treeData = this.actionGetCatalog(this.data)
+          let data = this.treeData
+          // let data = res.data.result
+          // this.data = data
+          console.log(data[0]['label'])
           // 初始化树对象
-          // this.$emit('setInitData', data[0])
+          this.TreeChange({data: data[0], node: {}})
+            .then((res) => { console.log(res) })
           // 循环出默认展开项的ID
           for (let i in data) {
-            this.defaultExpanded.push(data[i]['organizationid'])
+            this.defaultExpanded.push(data[i]['label'])
           }
           this.TreeChange({data: data[0], node: this.$refs.tree.$children[0]})
           this.$nextTick(() => {
@@ -98,16 +115,16 @@ export default {
     },
     append (data, node) {
       const newChild = { organizationid: data.organizationid, childnum: 0, orgname: '新建组织机构', Children: [] }
-      if (!data.Children) {
-        this.$set(data, 'Children', [])
+      if (!data.children) {
+        this.$set(data, 'children', [])
       }
-      data.Children.push(newChild)
+      data.children.push(newChild)
       this.TreeChange({data, node})
     },
     remove (node, data) {
       console.log(data)
       let parent = node.parent
-      parent.data.Children.pop()
+      parent.data.children.pop()
       let request = []
       this.users.forEach((element) => {
         request.push(element.userID)
@@ -152,72 +169,8 @@ export default {
           })
       }
     },
-    renameDeviceGroupList (event, data, node) {
-      console.log('焦点转移绑定成功')
-      let text = event.target.textContent
-      let children = node.parent.data.Children
-      children[children.length - 1].orgname = text
-      // if (text !== '新建设备分组') {
-      this.$ajax.post('Organization/List', {pageIndex: 1, pageSize: 1000})
-        .then((res) => {
-          if (res.data.code === 1) {
-            console.log(res)
-            let total = res.data.result.length
-            let vertos = []
-            let axios = []
-            res.data.result.forEach((org) => {
-              axios.push(this.$ajax.get(`Organization/Detail/${org.organizationid}`))
-            })
-            this.$ajax.all(axios)
-              .then(res => {
-                res.forEach((re) => {
-                  if (re != null && re.data.result != null) {
-                    vertos.push(Number(re.data.result.vertoid.slice(2)))
-                  }
-                })
-                let id = String(Math.max(...vertos) + 1).length > 1 ? String(Math.max(...vertos) + 1) : '0' + String(Math.max(...vertos) + 1)
-                console.log(vertos, id)
-                let vertoNum = '99' + id
-                let alarmNum = '91' + id
-                let voiceNum = '92' + id
-                let broadNum = '93' + id
-                let meetingNum = '94' + id
-                this.$ajax.post('Organization/Create', {
-                  orgcode: '00000' + String(Number(total) + 1),
-                  orgname: text,
-                  parentid: data.organizationid,
-                  vertoid: vertoNum,
-                  voicecallid: voiceNum,
-                  meetingid: meetingNum,
-                  broadid: broadNum,
-                  alarmid: alarmNum
-                })
-                  .then((res) => {
-                    console.log(res)
-                    if (res.data.code === 1) {
-                      let organizationID = res.data.result.organizationid
-                      data.organizationid = organizationID
-                      let request = {
-                        rolename: text,
-                        childdata: false
-                      }
-                      this.$ajax.post('Role/Create', request)
-                        .then(res => {
-                          console.log(res)
-                          if (res.data.code === 1) {
-                            let result = res.data.result
-                            console.log(result)
-                            this.$emit('refresh')
-                          }
-                        })
-                    }
-                  })
-              })
-          }
-        })
-      event.target.contentEditable = 'false'
-    },
     renderContent (h, { node, data, store }) {
+      console.log('enter into tree update status........')
       if (this.status === 'change') {
         let neww = false
         if (node.label === '新建组织机构') {
@@ -246,6 +199,57 @@ export default {
       if (event.keyCode === 13) {
         console.log(event, data, node)
         this.renameDeviceGroupList(event, data, node)
+      }
+    },
+    actionGetCatalog (data) {
+      let tree = []
+      console.log('actionGetCatalog!')
+      // 把"name"换成"label"
+      for (let i = 0; i < data.length; i++) {
+        data[i].label = data[i].name
+        delete data[i].name
+      }
+      console.log('原始data', data)
+      tree = this.getJsonTree(data, {
+        id: 'catalogId',
+        pid: 'parentId',
+        children: 'children'
+      })
+      console.log('生成树data:')
+      console.log(tree)
+      return tree
+    },
+    getJsonTree (data, config) {
+      let id = config.id || 'id'
+      let pid = config.pid || 'pid'
+      let children = config.children || 'children'
+      let idMap = []
+      let jsonTree = []
+      data.forEach(function (v) {
+        idMap[v[id]] = v
+      })
+      data.forEach(function (v) {
+        let parent = idMap[v[pid]]
+        if (parent) {
+          !parent[children] && (parent[children] = [])
+          parent[children].push(v)
+        } else {
+          jsonTree.push(v)
+        }
+      })
+      // 循环遍历给tree加图标
+      this.treeAddIcon(jsonTree)
+      return jsonTree
+    },
+    treeAddIcon (data) {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].children) {
+          // icon来自阿里巴巴矢量图标库http://iconfont.cn
+          data[i].icon = 'iconfont icon-wenjianjia'
+          this.treeAddIcon(data[i].children)
+        } else {
+          data[i].icon = 'iconfont icon-wenjian'
+        }
       }
     }
   }
