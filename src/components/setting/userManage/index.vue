@@ -11,7 +11,7 @@
         <i class="fa fa-list-ul" aria-hidden="true"></i>远程供电站点
         <span><button type="button" class="btn btn-sm btn-info" @click="changeStatus">修改</button></span>
       </div>
-      <tree > :status=status</tree>
+      <tree :stationStatus="stationStatus"></tree>
     </div>
     <div class="singleDevice">
       <div class="table">
@@ -60,7 +60,7 @@ export default {
   },
   data () {
     return {
-      status: 'show',
+      stationStatus: 'show',
       showDeviceList: false,
       labels,
       selectUser: [],
@@ -201,12 +201,12 @@ export default {
       $('.allDevice').removeClass('moveLeftDev').addClass('moveRightDev')
     },
     changeStatus () {
-      if (this.status === 'show') {
-        this.status = 'change'
+      if (this.stationStatus === 'show') {
+        this.stationStatus = 'change'
       } else {
-        this.status = 'show'
+        this.stationStatus = 'show'
       }
-      console.log('now update status =', this.status)
+      console.log('now update status =', this.stationStatus)
     }
   }
 }

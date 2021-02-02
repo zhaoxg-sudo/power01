@@ -8,7 +8,7 @@
       :default-expanded-keys="defaultExpanded"
       @node-click="handleNodeClick"
       node-key="label"
-      :expand-on-click-node="true"
+      :expand-on-click-node="false"
       :render-content="renderContent"
     >
     </el-tree>
@@ -19,45 +19,31 @@
 // import $ from 'jquery'
 import { mapGetters, mapActions } from 'vuex'
 // import {GET_USER_INFO} from 'store/getters/type'
-
 export default {
   props: {
-    Api: {
-      type: String,
-      default: ''
-    },
-    status: {
+    stationStatus: {
       type: String
-    },
-    targetUserGroupId: {
-      type: String
-    },
-    users: {
-      type: Array
-    },
-    deviceGroupsDelete: {
-      type: Array
     }
   },
   watch: {
-    targetUserGroupId: (targetUserGroupId) => {
-      console.log(targetUserGroupId)
+    stationSatus: (stationStatus) => {
+      console.log(stationStatus)
     }
   },
   data () {
     return {
       data: [
-        {'catalogId': 58, 'parentId': -1, 'name': '棋盘梁隧道1'},
-        {'catalogId': 59, 'parentId': 58, 'name': '南向局端直流电源1'},
-        {'catalogId': 60, 'parentId': 59, 'name': '南向远端1'},
-        {'catalogId': 61, 'parentId': 59, 'name': '南向远端2'},
-        {'catalogId': 62, 'parentId': 59, 'name': '南向远端3'},
-        {'catalogId': 63, 'parentId': 59, 'name': '南向远端4'},
-        {'catalogId': 64, 'parentId': 58, 'name': '北向局端直流电源2'},
-        {'catalogId': 65, 'parentId': 64, 'name': '北向远端1'},
-        {'catalogId': 66, 'parentId': 64, 'name': '北向远端2'},
-        {'catalogId': 67, 'parentId': -1, 'name': '太子城隧道2'},
-        {'catalogId': 68, 'parentId': 67, 'name': '局端交流电源1'}
+        {'catalogId': 58, 'parentId': -1, 'label': '棋盘梁隧道1'},
+        {'catalogId': 59, 'parentId': 58, 'label': '南向局端直流电源1'},
+        {'catalogId': 60, 'parentId': 59, 'label': '南向远端1'},
+        {'catalogId': 61, 'parentId': 59, 'label': '南向远端2'},
+        {'catalogId': 62, 'parentId': 59, 'label': '南向远端3'},
+        {'catalogId': 63, 'parentId': 59, 'label': '南向远端4'},
+        {'catalogId': 64, 'parentId': 58, 'label': '北向局端直流电源2'},
+        {'catalogId': 65, 'parentId': 64, 'label': '北向远端1'},
+        {'catalogId': 66, 'parentId': 64, 'label': '北向远端2'},
+        {'catalogId': 67, 'parentId': -1, 'label': '太子城隧道2'},
+        {'catalogId': 68, 'parentId': 67, 'label': '局端交流电源1'}
       ],
       treeData: [],
       defaultExpanded: [],
@@ -114,7 +100,7 @@ export default {
       this.TreeChange({data, node})
     },
     append (data, node) {
-      const newChild = { organizationid: data.organizationid, childnum: 0, orgname: '新建组织机构', Children: [] }
+      const newChild = { catalogId: 100, parentId: 58, label: '新建站点', children: [] }
       if (!data.children) {
         this.$set(data, 'children', [])
       }
@@ -171,16 +157,17 @@ export default {
     },
     renderContent (h, { node, data, store }) {
       console.log('enter into tree update status........')
-      if (this.status === 'change') {
+      console.log(this.stationStatus)
+      if (this.stationStatus === 'change') {
         let neww = false
-        if (node.label === '新建组织机构') {
+        if (node.label === '新建站点') {
           neww = true
         } else {
           neww = false
         }
         return (
           <span class="custom-tree-node">
-            <span contenteditable = {neww} onkeydown = {() => this.enter(event, data, node)} onblur = {() => this.renameDeviceGroupList(event, data, node)}>
+            <span contenteditable = {neww} onkeydown={() => this.enter(event, data, node)} onblur = {() => this.renameDeviceGroupList(event, data, node)}>
               {node.label}
             </span>
             <span>
@@ -201,14 +188,74 @@ export default {
         this.renameDeviceGroupList(event, data, node)
       }
     },
+    renameDeviceGroupList (event, data, node) {
+      console.log('焦点转移绑定成功')
+      let text = event.target.textContent
+      let children = node.parent.data.Children
+      children[children.length - 1].orgname = text
+      // if (text !== '新建设备分组') {
+      this.$ajax.post('Organization/List', {pageIndex: 1, pageSize: 1000})
+        .then((res) => {
+          if (res.data.code === 1) {
+            console.log(res)
+            let total = res.data.result.length
+            let vertos = []
+            let axios = []
+            res.data.result.forEach((org) => {
+              axios.push(this.$ajax.get(`Organization/Detail/${org.organizationid}`))
+            })
+            this.$ajax.all(axios)
+              .then(res => {
+                res.forEach((re) => {
+                  if (re !== null && re.data.result !== null) {
+                    vertos.push(Number(re.data.result.vertoid.slice(2)))
+                  }
+                })
+                let id = String(Math.max(...vertos) + 1).length > 1 ? String(Math.max(...vertos) + 1) : '0' + String(Math.max(...vertos) + 1)
+                console.log(vertos, id)
+                let vertoNum = '99' + id
+                let alarmNum = '91' + id
+                let voiceNum = '92' + id
+                let broadNum = '93' + id
+                let meetingNum = '94' + id
+                this.$ajax.post('Organization/Create', {
+                  orgcode: '00000' + String(Number(total) + 1),
+                  orgname: text,
+                  parentid: data.organizationid,
+                  vertoid: vertoNum,
+                  voicecallid: voiceNum,
+                  meetingid: meetingNum,
+                  broadid: broadNum,
+                  alarmid: alarmNum
+                })
+                  .then((res) => {
+                    console.log(res)
+                    if (res.data.code === 1) {
+                      let organizationID = res.data.result.organizationid
+                      data.organizationid = organizationID
+                      let request = {
+                        rolename: text,
+                        childdata: false
+                      }
+                      this.$ajax.post('Role/Create', request)
+                        .then(res => {
+                          console.log(res)
+                          if (res.data.code === 1) {
+                            let result = res.data.result
+                            console.log(result)
+                            this.$emit('refresh')
+                          }
+                        })
+                    }
+                  })
+              })
+          }
+        })
+      event.target.contentEditable = 'false'
+    },
     actionGetCatalog (data) {
       let tree = []
       console.log('actionGetCatalog!')
-      // 把"name"换成"label"
-      for (let i = 0; i < data.length; i++) {
-        data[i].label = data[i].name
-        delete data[i].name
-      }
       console.log('原始data', data)
       tree = this.getJsonTree(data, {
         id: 'catalogId',
