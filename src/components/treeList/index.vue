@@ -1,6 +1,6 @@
 <template>
   <div class="orgTreeList">
-    <div class="listTitle">供电设备列表</div>
+    <div class="listTitle">远程供电设备列表</div>
     <tree @click = "click"></tree>
     <i class="fa fa-chevron-left" aria-hidden="true"  @click="close"></i>
   </div>

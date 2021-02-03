@@ -3,12 +3,12 @@
     <header>
       <div class="user">
         <span @click="returnSystem()">
-          <i  class="fa fa-reply"></i> 返回系统
+          <i  class="fa fa-reply"></i> 返回主页
         </span>
       </div>
       <div class="sysName">
         <div>
-          <i class="fa fa-cogs"></i>系统管理
+          <i class="fa fa-cogs"></i>配置管理
         </div>
       </div>
       <ul class="settingMenu">
@@ -34,7 +34,7 @@ export default {
     this.$nextTick(function () {
       let router = routes.options.routes
       router.forEach((r, i) => {
-        if (r.name === '系统设置') {
+        if (r.name === '配置管理') {
           this.routerList = r.children
           console.log('setting router:', this.routerList)
         }

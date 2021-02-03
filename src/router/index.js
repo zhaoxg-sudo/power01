@@ -9,6 +9,7 @@ import alarm from '@/components/alarm'
 import run from '@/components/run'
 import setting from '@/components/setting/index'
 import treeManager from '@/components/setting/userManage/index'
+import alarmConfig from '@/components/setting/deviceManage/index'
 // import { settings } from 'nprogress'
 
 Vue.use(Router)
@@ -27,21 +28,26 @@ const router = new Router({
         },
         {
           path: '/alarm',
-          name: '报警管理',
+          name: '告警管理',
           component: alarm
         }
       ]
     },
     {
       path: '/setting',
-      name: '系统设置',
-      // redirect: '/setting/userManage/index',
+      name: '配置管理',
+      redirect: '/setting/userManage/index',
       component: setting,
       children: [
         {
           path: '/setting/userManage/index',
-          name: '站点管理',
+          name: '站点配置',
           component: treeManager
+        },
+        {
+          path: '/setting/deviceManage',
+          name: '告警配置',
+          component: alarmConfig
         }
       ]
     }

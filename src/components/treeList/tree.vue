@@ -36,7 +36,8 @@ export default {
         {'catalogId': 68, 'parentId': 67, 'name': '二级目录3'}
       ], */
       data: [
-        {'catalogId': 58, 'parentId': -1, 'name': '棋盘梁隧道1'},
+        {'catalogId': 0, 'parentId': -1, 'name': '站点设备树'},
+        {'catalogId': 58, 'parentId': 0, 'name': '棋盘梁隧道1'},
         {'catalogId': 59, 'parentId': 58, 'name': '南向局端直流电源1'},
         {'catalogId': 60, 'parentId': 59, 'name': '南向远端1'},
         {'catalogId': 61, 'parentId': 59, 'name': '南向远端2'},
@@ -45,7 +46,7 @@ export default {
         {'catalogId': 64, 'parentId': 58, 'name': '北向局端直流电源2'},
         {'catalogId': 65, 'parentId': 64, 'name': '北向远端1'},
         {'catalogId': 66, 'parentId': 64, 'name': '北向远端2'},
-        {'catalogId': 67, 'parentId': -1, 'name': '太子城隧道2'},
+        {'catalogId': 67, 'parentId': 0, 'name': '太子城隧道2'},
         {'catalogId': 68, 'parentId': 67, 'name': '局端交流电源1'}
       ],
       treeData: [],

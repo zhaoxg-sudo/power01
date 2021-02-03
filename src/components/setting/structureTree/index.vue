@@ -33,7 +33,8 @@ export default {
   data () {
     return {
       data: [
-        {'catalogId': 58, 'parentId': -1, 'label': '棋盘梁隧道1'},
+        {'catalogId': 0, 'parentId': -1, 'label': '站点设备树'},
+        {'catalogId': 58, 'parentId': 0, 'label': '棋盘梁隧道1'},
         {'catalogId': 59, 'parentId': 58, 'label': '南向局端直流电源1'},
         {'catalogId': 60, 'parentId': 59, 'label': '南向远端1'},
         {'catalogId': 61, 'parentId': 59, 'label': '南向远端2'},
@@ -42,7 +43,7 @@ export default {
         {'catalogId': 64, 'parentId': 58, 'label': '北向局端直流电源2'},
         {'catalogId': 65, 'parentId': 64, 'label': '北向远端1'},
         {'catalogId': 66, 'parentId': 64, 'label': '北向远端2'},
-        {'catalogId': 67, 'parentId': -1, 'label': '太子城隧道2'},
+        {'catalogId': 67, 'parentId': 0, 'label': '太子城隧道2'},
         {'catalogId': 68, 'parentId': 67, 'label': '局端交流电源1'}
       ],
       treeData: [],
