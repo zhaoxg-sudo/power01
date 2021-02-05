@@ -3,7 +3,7 @@
     <el-tree
       ref="tree"
       :data="treeData"
-      :highlight-current="true"
+      highlight-current
       :props="defaultProps"
       :default-expanded-keys="defaultExpanded"
       node-key="label"
@@ -36,8 +36,8 @@ export default {
         {'catalogId': 68, 'parentId': 67, 'name': '二级目录3'}
       ], */
       data: [
-        {'catalogId': 0, 'parentId': -1, 'name': '站点设备树'},
-        {'catalogId': 58, 'parentId': 0, 'name': '棋盘梁隧道1'},
+        {'catalogId': 1, 'parentId': 0, 'name': '站点设备树'},
+        {'catalogId': 58, 'parentId': 1, 'name': '棋盘梁隧道1'},
         {'catalogId': 59, 'parentId': 58, 'name': '南向局端直流电源1'},
         {'catalogId': 60, 'parentId': 59, 'name': '南向远端1'},
         {'catalogId': 61, 'parentId': 59, 'name': '南向远端2'},
@@ -46,7 +46,7 @@ export default {
         {'catalogId': 64, 'parentId': 58, 'name': '北向局端直流电源2'},
         {'catalogId': 65, 'parentId': 64, 'name': '北向远端1'},
         {'catalogId': 66, 'parentId': 64, 'name': '北向远端2'},
-        {'catalogId': 67, 'parentId': 0, 'name': '太子城隧道2'},
+        {'catalogId': 67, 'parentId': 1, 'name': '太子城隧道2'},
         {'catalogId': 68, 'parentId': 67, 'name': '局端交流电源1'}
       ],
       treeData: [],
@@ -76,9 +76,10 @@ export default {
     refresh () {
       this.$ajax.get('http://power.ieyeplus.com:7001/' + 'localall')
         .then((res) => {
+          console.log(res.data)
           // let data = res.data
-          // this.treeData = this.actionGetCatalog(res.data)
-          this.treeData = this.actionGetCatalog(this.data)
+          this.treeData = this.actionGetCatalog(res.data)
+          // this.treeData = this.actionGetCatalog(this.data)
           let data = this.treeData
           // this.data = data
           console.log(data[0]['label'])
@@ -115,15 +116,15 @@ export default {
     actionGetCatalog (data) {
       let tree = []
       console.log('actionGetCatalog!')
-      // 把"name"换成"label"
+      /* 把"name"换成"label"
       for (let i = 0; i < data.length; i++) {
         data[i].label = data[i].name
         delete data[i].name
-      }
+      } */
       console.log('原始data', data)
       tree = this.getJsonTree(data, {
-        id: 'catalogId',
-        pid: 'parentId',
+        id: 'catalogid',
+        pid: 'parentid',
         children: 'children'
       })
       console.log('生成树data:')

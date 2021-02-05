@@ -12,11 +12,15 @@
       :render-content="renderContent"
     >
     </el-tree>
+    <div v-if="modolType!=null && modolType < 0">
+       <nodeedit :transferdata="transferdata" :changedNode="changedNode" :modolType="modolType" @close="closeModal" @append="append"></nodeedit>
+    </div>
   </div>
 </template>
 
 <script>
 // import $ from 'jquery'
+import nodeedit from './edit.vue'
 import { mapGetters, mapActions } from 'vuex'
 // import {GET_USER_INFO} from 'store/getters/type'
 export default {
@@ -47,6 +51,10 @@ export default {
         {'catalogId': 68, 'parentId': 67, 'label': '局端交流电源1'}
       ],
       treeData: [],
+      parentData: null,
+      changedNode: {node: null, data: null, addNodeData: null},
+      modolType: null,
+      transferdata: {deviceId: '', targetMenuId: ''},
       defaultExpanded: [],
       defaultProps: {
         children: 'children',
@@ -54,8 +62,12 @@ export default {
       }
     }
   },
+  components: {
+    nodeedit
+  },
   computed: {
     ...mapGetters({
+      // updateState: 'updateState',
       // get_user_info: GET_USER_INFO
     })
   },
@@ -72,7 +84,7 @@ export default {
     refresh () {
       this.$ajax.get('http://power.ieyeplus.com:7001/' + 'localall')
         .then((res) => {
-          this.treeData = this.actionGetCatalog(this.data)
+          this.treeData = this.actionGetCatalog(res.data)
           let data = this.treeData
           // let data = res.data.result
           // this.data = data
@@ -100,13 +112,27 @@ export default {
       // 提交树对象，以及当前点击树菜单的数据至仓库
       this.TreeChange({data, node})
     },
-    append (data, node) {
-      const newChild = { catalogId: 100, parentId: 58, label: '新建站点', children: [] }
+    addNode (node, data) {
+      console.log('send to edit  node :=', node)
+      console.log('send to edit  data :=', data)
+      this.changedNode.node = node
+      this.changedNode.data = data
+      this.modolType = -1
+    },
+    append (e) {
+      console.log('当前++data', e.data)
+      console.log('当前++node', e.node)
+      console.log('当前++addnode', e.addNodeData)
+      let node = e.node
+      let data = e.data
+      const newChild = e.addNodeData
       if (!data.children) {
         this.$set(data, 'children', [])
       }
       data.children.push(newChild)
       this.TreeChange({data, node})
+      this.modolType = null
+      // this.refresh()
     },
     remove (node, data) {
       console.log(data)
@@ -172,7 +198,7 @@ export default {
               {node.label}
             </span>
             <span>
-              <el-button size="mini" type="text" on-click={ () => this.append(data) }><i class = "fa fa-plus"></i></el-button>
+              <el-button size="mini" type="text" on-click={ () => this.addNode(node, data) }><i class = "fa fa-plus"></i></el-button>
               <el-button size="mini" type="text" on-click={ () => this.remove(node, data) }><i class = "fa fa-minus"></i></el-button>
             </span>
           </span>)
@@ -254,13 +280,16 @@ export default {
         })
       event.target.contentEditable = 'false'
     },
+    closeModal () {
+      this.modolType = null
+    },
     actionGetCatalog (data) {
       let tree = []
       console.log('actionGetCatalog!')
       console.log('原始data', data)
       tree = this.getJsonTree(data, {
-        id: 'catalogId',
-        pid: 'parentId',
+        id: 'catalogid',
+        pid: 'parentid',
         children: 'children'
       })
       console.log('生成树data:')

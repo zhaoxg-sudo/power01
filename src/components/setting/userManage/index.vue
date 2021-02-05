@@ -4,7 +4,7 @@
       aaa
       </div>
       <div v-if="modolType!=null && modolType < 0">
-       detail
+       aaa
       </div>
       <div class="groupList">
       <div class="menuType">
@@ -34,7 +34,7 @@ import { mapGetters } from 'vuex'
 import tree from '../structureTree/index.vue'
 // import paging from '../paging/index.vue'
 // import modal from './modal.vue'
-import edit from './edit.vue'
+// import edit from './edit.vue'
 // import {getHeights} from 'utils/page/setting'
 // import { GET_USER_INFO } from 'store/getters/type'
 const labels = {
@@ -54,7 +54,7 @@ export default {
   computed: {
     ...mapGetters({
       // get_user_info: GET_USER_INFO,
-      // updateState: 'updateState',
+      updateState: 'updateState',
       TreeData: 'TreeData'
     })
   },
@@ -102,7 +102,8 @@ export default {
       },
       deep: true
     },
-    'updateState': function () {
+    'updateState': function (e) {
+      console.log('update changed :', e)
       if (this.updateState === 1) {
         this.refresh()
       } else if (this.updateState === 2) {
@@ -113,17 +114,17 @@ export default {
     }
   },
   components: {
-    tree,
+    tree
     // modal,
     // paging,
     // deviceList,
-    edit
+    // edit
     // alarm,
   },
   created () {
     this.$nextTick(() => {
       // this.refresh()
-      // getHeights()
+      this.getHeights()
     })
     this.targetMenu = this.TreeData
     if (!this.targetMenu.hasOwnProperty('organizationid')) {
@@ -207,6 +208,13 @@ export default {
         this.stationStatus = 'show'
       }
       console.log('now update status =', this.stationStatus)
+    },
+    getHeights () {
+      //  高度判断
+      var windowHeight = $(window).height()
+      $('.content').height(windowHeight - 120)
+      // var maxHeight = windowHeight - $('.sysName').outerHeight()
+      // var contentHeight = $('.content').outerHeight()
     }
   }
 }
@@ -214,6 +222,6 @@ export default {
 </script>
 <style  scoped>
 .watcher{
-margin-left:5px;
+  margin-left: 5px;
 }
 </style>

@@ -56,17 +56,17 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <label class="col-sm-6 control-label">设备类型</label>
+              <label class="col-sm-6 control-label">站点类型</label>
               <div class="col-sm-6">
                 <label class="radio-inline">
-                  <input type="radio" value="0" v-model="formData.type">单话机
+                  <input type="radio" value="0" v-model="formData.type">站点组织
 
                 </label>
                 <label class="radio-inline">
-                  <input type="radio" value="1" v-model="formData.type">视频终端
+                  <input type="radio" value="1" v-model="formData.type">电源发生器
                 </label>
                 <label class="radio-inline">
-                  <input type="radio" value="2" v-model="formData.type">组播终端
+                  <input type="radio" value="2" v-model="formData.type">电源转换器
                 </label>
               </div>
             </div>
@@ -88,7 +88,8 @@ import { mapActions } from 'vuex'
 export default {
   props: {
     modolType: {type: Number},
-    transferdata: {type: Object}
+    transferdata: {type: Object},
+    changedNode: {type: Object}
   },
   data () {
     return {
@@ -102,6 +103,20 @@ export default {
         ipaddress: '',
         port: ''
       },
+      upData: {
+        catalogid: '100',
+        parentid: '1',
+        label: '棋盘梁隧道100',
+        stationtype: 'org',
+        commtype: '',
+        protocoltype: '',
+        positioninfo: '',
+        addinfo: '',
+        ipaddress: '',
+        ipport: '',
+        childrennum: ''
+      },
+      returnData: {node: null, data: null, addNodeData: null},
       rules: {},
       self: this,
       range: '',
@@ -114,6 +129,7 @@ export default {
     this.$nextTick(() => {
       let documentHeight = document.documentElement.clientHeight
       $('.popUp').css('top', documentHeight * 0.3 + 'px')
+      // $('.popUp').css('top', 300 + 'px')
       /* if (this.modolType === -2) {
         this.$ajax.get(`Device/Detail/${this.transferdata.deviceid}`)
           .then(res => {
@@ -139,51 +155,13 @@ export default {
       this.$emit('close')
     },
     userEdit () {
-      if (this.modolType !== -2) {
-        let axios = []
-        let range = this.range === '' ? 1 : parseInt(this.range)
-        for (let i = 0; i < range; i++) {
-          if (this.formData.type !== 2) {
-            let temp = {}
-            temp.devicecode = String(parseInt(this.formData.devicecode) + i)
-            temp.devicename = this.formData.devicename === '' ? temp.devicecode : (range === 1 ? this.formData.devicename : (this.formData.devicename + String(i + 1)))
-            temp.password = this.formData.password === '' ? temp.devicecode : this.formData.password
-            temp.type = this.formData.type
-            temp.devicevedios = this.formData.devicevedios
-            temp.feature = this.formData.feature
-            axios.push(this.$ajax.post('Device/Create', temp))
-          } else if (this.formData.type === 2) {
-            let temp = {}
-            temp.ipaddress = this.formData.ipaddress
-            temp.organizationid = this.transferdata.targetMenuId
-            temp.port = this.formData.port
-            temp.type = this.formData.type
-            temp.devicename = this.formData.devicename
-            axios.push(this.instance({url: 'Device/CreateMulticast', method: 'post', data: temp}))
-          }
-        }
-        this.$ajax.all(axios).then(res => {
-          res.forEach((re) => {
-            if (re.data.code === 0) {
-              setTimeout(() => { this.$message.success('某个设备已存在,请勿重复添加') }, 500)
-            } else if (re.data.code === 2) {
-              setTimeout(() => { this.$message.success(res.data.result) }, 500)
-            } else {
-              setTimeout(() => { this.$message.success(re.data.result.devicecode + '添加成功') }, 500)
-            }
-          })
-          this.$store.dispatch('update', 1)
-        })
-      } else {
-        let request = Object.assign(this.formData, {deviceid: this.transferdata.deviceId})
-        this.$ajax.put(`Device/Edit`, request)
-          .then(res => {
-            if (res.data.code === 1) {
-              this.$message.success('修改成功')
-              this.$store.dispatch('update', 1)
-            }
-          })
-      }
+      this.$message.success('修改成功')
+      this.returnData.node = this.changedNode.node
+      this.returnData.data = this.changedNode.data
+      this.upData.parentid = this.changedNode.data.catalogid
+      this.returnData.addNodeData = this.upData
+      console.log('returnData=', this.returnData)
+      this.$emit('append', this.returnData)
     }
   }
 }
