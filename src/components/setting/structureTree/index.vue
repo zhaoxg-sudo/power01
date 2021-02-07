@@ -59,7 +59,10 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      instance: this.$ajax.create({
+        baseURL: 'http://power.ieyeplus.com:7001/'
+      })
     }
   },
   components: {
@@ -103,13 +106,15 @@ export default {
         })
     },
     handleNodeClick (data, node, event) {
-      // 判断点击的是否为默认选中的树节点，如果不是，取消默认选中
-      if (event) {
+      console.log('config node click 事件.................................')
+      console.log(node.id, data.label)
+      if (event) { // 判断点击的是否为默认选中的树节点，如果不是，取消默认选中
         if (node.id !== this.$refs.tree.$children[0].node.id) {
           this.$refs.tree.$children[0].$el.className = 'el-tree-node'
         }
       }
       // 提交树对象，以及当前点击树菜单的数据至仓库
+      this.$emit('click')
       this.TreeChange({data, node})
     },
     addNode (node, data) {
@@ -123,16 +128,30 @@ export default {
       console.log('当前++data', e.data)
       console.log('当前++node', e.node)
       console.log('当前++addnode', e.addNodeData)
-      let node = e.node
-      let data = e.data
-      const newChild = e.addNodeData
-      if (!data.children) {
-        this.$set(data, 'children', [])
-      }
-      data.children.push(newChild)
-      this.TreeChange({data, node})
-      this.modolType = null
-      // this.refresh()
+      // insert into DB
+      let temp = {}
+      temp = e.addNodeData
+      this.instance({
+        url: 'tree/addnode',
+        method: 'post',
+        data: temp
+      }).then(res => {
+        if (res.data.code === 1) {
+          // add children node
+          console.log('添加树节点成功', res.data.result)
+          let node = e.node
+          let data = e.data
+          const newChild = e.addNodeData
+          if (!data.children) {
+            this.$set(data, 'children', [])
+          }
+          data.children.push(newChild)
+          this.TreeChange({data, node})
+          this.modolType = null
+          // this.refresh()
+        }
+      })
+      // end insert DB
     },
     remove (node, data) {
       console.log(data)
@@ -190,7 +209,7 @@ export default {
         if (node.label === '新建站点') {
           neww = true
         } else {
-          neww = false
+          neww = true
         }
         return (
           <span class="custom-tree-node">

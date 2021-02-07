@@ -104,7 +104,7 @@ export default {
         port: ''
       },
       upData: {
-        catalogid: '100',
+        catalogid: '98',
         parentid: '1',
         label: '棋盘梁隧道100',
         stationtype: 'org',
@@ -119,10 +119,7 @@ export default {
       returnData: {node: null, data: null, addNodeData: null},
       rules: {},
       self: this,
-      range: '',
-      instance: this.$ajax.create({
-        baseURL: 'https://scc.ieyeplus.com:8001/'
-      })
+      range: ''
     }
   },
   created () {
