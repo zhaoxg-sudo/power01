@@ -139,6 +139,7 @@ export default {
         if (res.data.code === 1) {
           // add children node
           console.log('添加树节点成功', res.data.result)
+          this.$message.success('添加树节点成功')
           let node = e.node
           let data = e.data
           const newChild = e.addNodeData
@@ -149,6 +150,9 @@ export default {
           this.TreeChange({data, node})
           this.modolType = null
           // this.refresh()
+        } else {
+          console.log('添加树节点失败', res.data.result)
+          this.$message.success('添加树节点失败')
         }
       })
       // end insert DB
@@ -158,11 +162,19 @@ export default {
       let parent = node.parent
       parent.data.children.pop()
       let request = []
-      this.users.forEach((element) => {
-        request.push(element.userID)
-      })
+      request.push(data.catalogid)
+      // let nodeChildren = {}
+      let delMsg = ''
+      // 弹窗提示
+      if (data.children) {
+        delMsg = '确认要删除该节点及其子节点吗?节点名称=' + data.label
+        // 循环出所有子节点
+      } else {
+        delMsg = '确认要删除该节点吗?节点名称=' + data.label
+      }
+      console.log(delMsg)
       if (request.length > 0) {
-        this.$ajax.post(`User/RemoveList`, request)
+        this.$ajax.post(`tree/delnode`, request)
           .then((res) => {
             if (res.data.code === 1) {
               this.$ajax.delete(`Organization/Remove/${data.organizationid}`)

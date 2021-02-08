@@ -152,7 +152,7 @@ export default {
       this.$emit('close')
     },
     userEdit () {
-      this.$message.success('修改成功')
+      this.$message.success('数据修改成功')
       this.returnData.node = this.changedNode.node
       this.returnData.data = this.changedNode.data
       this.upData.parentid = this.changedNode.data.catalogid
