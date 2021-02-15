@@ -6,7 +6,7 @@
         <div class="row">
           <div class="col-md-6" v-if="formData.type!=2">
             <div class="form-group">
-              <label class="col-sm-6 control-label">设备号</label>
+              <label class="col-sm-6 control-label">站点ID</label>
               <div class="col-sm-6">
                 <input type="text" class="form-control" v-model="formData.devicecode">
               </div>
@@ -14,7 +14,7 @@
           </div>
           <div class="col-md-6"  v-if="formData.type!=2">
             <div class="form-group">
-              <label class="col-sm-6 control-label">添加范围</label>
+              <label class="col-sm-6 control-label">父节点ID</label>
               <div class="col-sm-6">
                 <input type="text"  class="form-control" v-model="range">
               </div>
@@ -22,7 +22,7 @@
           </div>
           <div class="col-md-6" >
             <div class="form-group">
-              <label class="col-sm-6 control-label">设备名称</label>
+              <label class="col-sm-6 control-label">站点名称</label>
               <div class="col-sm-6">
                 <input type="text" placeholder="" class="form-control" v-model="formData.devicename">
               </div>
@@ -30,7 +30,7 @@
           </div>
           <div class="col-md-6" v-if="formData.type!=2">
             <div class="form-group">
-              <label class="col-sm-6 control-label">密码</label>
+              <label class="col-sm-6 control-label">子节点个数</label>
               <div class="col-sm-6">
                 <input type="text" class="form-control" v-model="formData.password">
               </div>
@@ -46,7 +46,7 @@
           </div>
           <div class="col-md-6" v-if="formData.type==2">
             <div class="form-group">
-              <label class="col-sm-6 control-label">端口号</label>
+              <label class="col-sm-6 control-label">模块个数</label>
               <div class="col-sm-6">
                 <input type="text" class="form-control" v-model="formData.port">
               </div>
@@ -114,7 +114,8 @@ export default {
         addinfo: '',
         ipaddress: '',
         ipport: '',
-        childrennum: ''
+        childrennum: '',
+        type: 0
       },
       returnData: {node: null, data: null, addNodeData: null},
       rules: {},

@@ -162,55 +162,44 @@ export default {
       let parent = node.parent
       parent.data.children.pop()
       let request = []
+      let delNodeName = []
       request.push(data.catalogid)
+      delNodeName.push(data.label)
       // let nodeChildren = {}
       let delMsg = ''
       // 弹窗提示
       if (data.children) {
-        delMsg = '确认要删除该节点及其子节点吗?节点名称=' + data.label
         // 循环出所有子节点
+        while (data.children) {
+          data = data.children
+          data.forEach((element) => {
+            request.push(element.catalogid)
+            delNodeName.push(element.label)
+          })
+        }
+        delMsg = '确认要删除该节点及其子节点吗?节点名称=' + delNodeName.join('|')
       } else {
         delMsg = '确认要删除该节点吗?节点名称=' + data.label
       }
+      console.log(request)
       console.log(delMsg)
       if (request.length > 0) {
-        this.$ajax.post(`tree/delnode`, request)
+        this.instance({
+          url: 'tree/delnode',
+          method: 'post',
+          data: request
+        })
           .then((res) => {
             if (res.data.code === 1) {
-              this.$ajax.delete(`Organization/Remove/${data.organizationid}`)
-                .then((res) => {
-                  console.log(res)
-                  if (res.data.code === 1) {
-                    console.log('组织机构删除成功')
-                    if (this.targetUserGroupId === '') {
-                      this.$ajax.delete(`Role/Remove/${this.targetUserGroupId}`)
-                      this.$ajax.post(`DeviceGroup/RemoveList/${this.deviceGroupsDelete}`)
-                      console.log('用户组,设备组删除成功')
-                      // window.location.reload()
-                      // this.$emit("refresh")
-                    } else {
-                      console.log('用户组删除失败')
-                    }
-                  }
-                })
+              console.log('删除树节点成功', res.data.result)
+              this.$message.success('删除树节点成功')
+            } else {
+              console.log('删除树节点失败', res.data.result)
+              this.$message.success('删除树节点失败')
             }
           })
       } else {
         console.log(data)
-        this.$ajax.delete(`Organization/Remove/${data.organizationid}`)
-          .then((res) => {
-            if (res.data.code === 1) {
-              console.log('组织机构删除成功')
-              if (this.targetUserGroupId !== '') {
-                this.$ajax.delete(`Role/Remove/${this.targetUserGroupId}`)
-                console.log('用户组删除成功')
-                // this.$emit("refresh")
-                // window.location.reload()
-              } else {
-                console.log('用户组删除失败')
-              }
-            }
-          })
       }
     },
     renderContent (h, { node, data, store }) {
