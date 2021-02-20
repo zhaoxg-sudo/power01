@@ -24,7 +24,7 @@ export default {
     }
   },
   created () {
-    this.menuList = routes.options.routes[0].children
+    this.menuList = routes.options.routes[2].children
   }
 }
 </script>

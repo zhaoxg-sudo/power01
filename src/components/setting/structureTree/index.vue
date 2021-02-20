@@ -158,9 +158,6 @@ export default {
       // end insert DB
     },
     remove (node, data) {
-      console.log(data)
-      let parent = node.parent
-      parent.data.children.pop()
       let request = []
       let delNodeName = []
       request.push(data.catalogid)
@@ -181,26 +178,51 @@ export default {
       } else {
         delMsg = '确认要删除该节点吗?节点名称=' + data.label
       }
-      console.log(request)
-      console.log(delMsg)
-      if (request.length > 0) {
-        this.instance({
-          url: 'tree/delnode',
-          method: 'post',
-          data: request
-        })
-          .then((res) => {
-            if (res.data.code === 1) {
-              console.log('删除树节点成功', res.data.result)
-              this.$message.success('删除树节点成功')
-            } else {
-              console.log('删除树节点失败', res.data.result)
-              this.$message.success('删除树节点失败')
-            }
+      this.$confirm(delMsg + ',点击：确定，确认删除；点击：取消，不删除', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        // showCancelButton: true,
+        // customClass: 'popContent',
+        cancelButtonClass: 'btn btn-sm btn-warning'
+      }).then(() => {
+        // del db
+        console.log(request)
+        console.log(delMsg)
+        if (request.length > 0) {
+          this.instance({
+            url: 'tree/delnode',
+            method: 'post',
+            data: request
           })
-      } else {
-        console.log(data)
-      }
+            .then((res) => {
+              if (res.data.code === 1) {
+                // 删除内存中节点数据
+                console.log(data)
+                let parent = node.parent
+                parent.data.children.pop()
+                // 删除内存 end
+                console.log('删除树节点成功', res.data.result)
+                this.$message.success('删除树节点成功')
+              } else {
+                console.log('删除树节点失败', res.data.result)
+                this.$message.success('删除树节点失败')
+              }
+            })
+        } else {
+          console.log(data)
+        }
+        // del db end
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     renderContent (h, { node, data, store }) {
       console.log('enter into tree update status........')

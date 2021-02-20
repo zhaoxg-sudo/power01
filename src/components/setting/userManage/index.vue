@@ -19,7 +19,7 @@
       </div>
       <div class="table">
         <h3> 用户 </h3>
-        <h3 v-if = "allDevices.length>=0">局端设备</h3>
+        <h3 v-if = "allDevices.length>0">局端设备</h3>
         <h3 v-if = "deviceGroups.length>0">设备组</h3>
       </div>
     </div>

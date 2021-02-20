@@ -8,17 +8,18 @@
  *
  */
 
-export default new class Uri {
-  constructor() {
-  }
+class Uri {
+  // constructor () {
+  // }
 
-  //URI 解码
-  decode(value) {
+  // URI 解码
+  decode (value) {
     return decodeURIComponent(value)
   }
 
-  //URI 编码
-  encode(value) {
+  // URI 编码
+  encode (value) {
     return encodeURIComponent(value)
   }
 }
+export default new Uri()

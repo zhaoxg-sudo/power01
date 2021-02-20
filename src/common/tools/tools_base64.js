@@ -9,23 +9,24 @@
  */
 
 // 存储前缀
-import {base64_prefix} from '../../common/config/index'
+import {base64Prefix} from '../../common/config/index.js'
 
 import base64 from 'js-base64'
 
-export default new class Base64 {
-  constructor() {
-    this.prefix = base64_prefix
+class Base64 {
+  constructor () {
+    this.prefix = base64Prefix
     this.base64 = base64.Base64
   }
 
   // base64加密
-  encode(val) {
-    return this.base64.encode(base64_prefix + val)
+  encode (val) {
+    return this.base64.encode(base64Prefix + val)
   }
 
   // base解密
-  decode(val) {
-    return this.base64.decode(base64_prefix + val)
+  decode (val) {
+    return this.base64.decode(base64Prefix + val)
   }
 }
+export default new Base64()

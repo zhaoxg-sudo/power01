@@ -414,7 +414,7 @@ export default {
      // 实现管理员对指定通话的强拆
        strongDelete() {
           if(this.selectRingCall.length == 0  &&  this.selectNowCall.length == 0){
-          this.$message.success("请选择一个通话或呼叫中的设备进行操作")
+          success("请选择一个通话或呼叫中的设备进行操作")
           $('.onlineSelected').removeClass('onlineSelected').addClass('online')
           $('.callingSelected').removeClass('callingSelected').addClass('calling')
           $('.waittingSelected').removeClass('waittingSelected').addClass('.waitting')

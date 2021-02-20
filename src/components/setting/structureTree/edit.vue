@@ -2,21 +2,21 @@
   <!--设备信息新增-->
   <div class="popUp" style="display: block;">
     <div class="popContent">
-      <el-form class="form-horizontal" :model="formData" ref="formData" :rules="rules">
+      <el-form class="form-horizontal" :model="upData" ref="upData" :rules="rules">
         <div class="row">
-          <div class="col-md-6" v-if="formData.type!=2">
+          <div class="col-md-6">
             <div class="form-group">
               <label class="col-sm-6 control-label">站点ID</label>
               <div class="col-sm-6">
-                <input type="text" class="form-control" v-model="formData.devicecode">
+                <input type="text" class="form-control" v-model="upData.catalogid">
               </div>
             </div>
           </div>
-          <div class="col-md-6"  v-if="formData.type!=2">
+          <div class="col-md-6">
             <div class="form-group">
-              <label class="col-sm-6 control-label">父节点ID</label>
+              <label class="col-sm-6 control-label">父节点信息</label>
               <div class="col-sm-6">
-                <input type="text"  class="form-control" v-model="range">
+                <input type="text"  class="form-control" v-model="parentID" :disabled="true">
               </div>
             </div>
           </div>
@@ -24,31 +24,31 @@
             <div class="form-group">
               <label class="col-sm-6 control-label">站点名称</label>
               <div class="col-sm-6">
-                <input type="text" placeholder="" class="form-control" v-model="formData.devicename">
+                <input type="text" placeholder="" class="form-control" v-model="upData.label">
               </div>
             </div>
           </div>
-          <div class="col-md-6" v-if="formData.type!=2">
+          <div class="col-md-6" v-if="upData.type!=0">
             <div class="form-group">
-              <label class="col-sm-6 control-label">子节点个数</label>
+              <label class="col-sm-6 control-label">协议类型</label>
               <div class="col-sm-6">
-                <input type="text" class="form-control" v-model="formData.password">
+                <input type="text" class="form-control" v-model="upData.protocoltype">
               </div>
             </div>
           </div>
-          <div class="col-md-6" v-if="formData.type==2">
+          <div class="col-md-6" v-if="upData.type!=0">
             <div class="form-group">
               <label class="col-sm-6 control-label">IP地址</label>
               <div class="col-sm-6">
-                <input type="text" class="form-control" v-model="formData.ipaddress">
+                <input type="text" class="form-control" v-model="upData.ipaddress">
               </div>
             </div>
           </div>
-          <div class="col-md-6" v-if="formData.type==2">
+          <div class="col-md-6" v-if="upData.type!=0">
             <div class="form-group">
-              <label class="col-sm-6 control-label">模块个数</label>
+              <label class="col-sm-6 control-label">端口</label>
               <div class="col-sm-6">
-                <input type="text" class="form-control" v-model="formData.port">
+                <input type="text" class="form-control" v-model="upData.port">
               </div>
             </div>
           </div>
@@ -59,14 +59,13 @@
               <label class="col-sm-6 control-label">站点类型</label>
               <div class="col-sm-6">
                 <label class="radio-inline">
-                  <input type="radio" value="0" v-model="formData.type">站点组织
-
+                  <input type="radio" value="0" v-model="upData.type">站点组织
                 </label>
                 <label class="radio-inline">
-                  <input type="radio" value="1" v-model="formData.type">电源发生器
+                  <input type="radio" value="1" v-model="upData.type">电源发生器
                 </label>
                 <label class="radio-inline">
-                  <input type="radio" value="2" v-model="formData.type">电源转换器
+                  <input type="radio" value="2" v-model="upData.type">电源转换器
                 </label>
               </div>
             </div>
@@ -104,10 +103,10 @@ export default {
         port: ''
       },
       upData: {
-        catalogid: '98',
-        parentid: '1',
-        label: '棋盘梁隧道100',
-        stationtype: 'org',
+        catalogid: '',
+        parentid: '',
+        label: '',
+        stationtype: '',
         commtype: '',
         protocoltype: '',
         positioninfo: '',
@@ -120,13 +119,14 @@ export default {
       returnData: {node: null, data: null, addNodeData: null},
       rules: {},
       self: this,
-      range: ''
+      parentID: ''
     }
   },
   created () {
     this.$nextTick(() => {
       let documentHeight = document.documentElement.clientHeight
       $('.popUp').css('top', documentHeight * 0.3 + 'px')
+      this.parentID = this.changedNode.data.catalogid + this.changedNode.data.label
       // $('.popUp').css('top', 300 + 'px')
       /* if (this.modolType === -2) {
         this.$ajax.get(`Device/Detail/${this.transferdata.deviceid}`)

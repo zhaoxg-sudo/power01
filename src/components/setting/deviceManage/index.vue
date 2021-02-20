@@ -4,7 +4,7 @@
       <div class="operate">
         <form class="form-inline">
           <div class="form-group">
-            <input type="text" placeholder="请输入要查询的设备编号" class="form-control select-width" style="width:200px;" v-model="fuzzyquery" />
+            <input type="text" placeholder="请输入要查询的告警编号" class="form-control select-width" style="width:200px;" v-model="fuzzyquery" />
           </div>
           <button type="button" class="btn btn-info" @click="openModal(-1)">
             <i class="fa fa-bolt" aria-hidden="true"></i>修改告警联动
@@ -20,11 +20,11 @@
       <table class="table">
         <thead>
           <tr>
-            <td>设备编号</td>
-            <td>设备名称</td>
-            <td>设备类型</td>
-            <td>所属组织id</td>
-            <td>操作</td>
+            <td>告警类型</td>
+            <td>告警信息</td>
+            <td>告警时间</td>
+            <td>告警联动</td>
+            <td>告警确认</td>
           </tr>
         </thead>
         <tbody>
