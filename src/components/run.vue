@@ -1,17 +1,22 @@
 <template>
   <div>
       <h1>{{msg}}</h1>
+      <topo></topo>
   </div>
 </template>
 
 <script>
 import $ from 'jquery'
+import topo from './topo/topo.vue'
 export default {
   name: 'run',
   data () {
     return {
       msg: '供电系统运行正常'
     }
+  },
+  components: {
+    topo: topo
   },
   created () {
     this.$nextTick(async () => {

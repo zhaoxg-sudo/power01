@@ -78,7 +78,7 @@ export default {
         this.showTip('用户名不能为空')
         return
       }
-      if (this.formData.formData === '') {
+      if (this.formData.password === '') {
         this.showTip('密码不能为空')
         return
       }

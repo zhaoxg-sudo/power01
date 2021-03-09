@@ -85,6 +85,7 @@ router.beforeEach((to, from, next) => {
   let toName = to.name
   // let fromName = from.name
   let isLogin = store.state.user_info.login
+  console.log('路由守卫login的当前值是', isLogin)
   if (!isLogin && toName !== 'login') {
     next({
       name: 'login'

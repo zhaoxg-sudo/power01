@@ -33,8 +33,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-// import {GET_USER_INFO} from 'store/getters/type'
-// import {SET_USER_INFO} from 'store/actions/type'
+import {GET_USER_INFO} from '@/store/getters/type'
+import {SET_USER_INFO} from '@/store/actions/type.js'
 export default {
   props: {
     username: {
@@ -61,13 +61,33 @@ export default {
   },
   computed: {
     ...mapGetters({
+      get_user_info: GET_USER_INFO
     })
   },
   watch: {
   },
   methods: {
     ...mapActions({
+      set_user_info: SET_USER_INFO
     }),
+    logout () {
+      this.$confirm('此操作将退出登录, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        cancelButtonClass: 'el-button--primary',
+        type: 'warning'
+      }).then(() => {
+        this.$message.success('退出成功')
+        this.set_user_info({
+          user: null,
+          freeswitchData: null,
+          login: false
+        })
+        setTimeout(this.$router.replace({name: 'login'}), 500)
+      }).catch(() => {
+        this.$message.success('退出取消')
+      })
+    },
     setting () {
       this.$router.push('/setting')
     }
