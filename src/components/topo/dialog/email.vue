@@ -1,11 +1,33 @@
 <template>
-  <el-dialog custom-class="topo-dialog" :close-on-click-modal="false" :title="`编辑 ${name[item.name]}`" :visible="dialogVisible" @close="onClose" width="580px" append-to-body>
-    <el-form :model="form" label-width="120px" ref="data" size="medium" :rules="rules">
+  <el-dialog
+    custom-class="topo-dialog"
+    :close-on-click-modal="false"
+    :title="`编辑 ${name[item.name]}`"
+    :visible="dialogVisible"
+    @close="onClose"
+    width="580px"
+    append-to-body
+  >
+    <el-form
+      :model="form"
+      label-width="120px"
+      ref="data"
+      size="medium"
+      :rules="rules"
+    >
       <el-form-item label="远端电源标题" prop="title">
-        <el-input v-model="form.title" auto-complete="off" placeholder="必填"></el-input>
+        <el-input
+          v-model="form.title"
+          auto-complete="off"
+          placeholder="必填"
+        ></el-input>
       </el-form-item>
       <el-form-item label="远端电源内容" prop="template">
-        <el-input v-model="form.template" auto-complete="off" placeholder="请输入远端电源的内容......"></el-input>
+        <el-input
+          v-model="form.template"
+          auto-complete="off"
+          placeholder="请输入远端电源的内容......"
+        ></el-input>
       </el-form-item>
       <p><em>TODO: 远端电源，其他字段未添加</em></p>
     </el-form>
@@ -17,42 +39,42 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import { name } from '../enum'
+import _ from 'lodash'
+import { name } from '../enum'
 
-  export default {
-    props: ['item'],
-    data() {
-      return {
-        form: _.cloneDeep(this.item.data) || {},
-        name: name,
-        dialogVisible: true,
-        rules: {
-          title: [
-            { required: true, message: '请输入远端电源标题', trigger: 'blur' }
-          ],
-          template: [
-            { required: true, message: '请输入远端电源内容', trigger: 'blur' }
-          ]
-        }
-      }
-    },
-    methods: {
-      onConfirm() {
-        this.$refs['data'].validate(valid => {
-          if (valid) {
-            this.item.data = this.form
-            this.onClose()
-          }
-        })
-      },
-      onClose() {
-        this.dialogVisible = false
-        this.$emit('on-close', this.item)
-        this.item.updateItem({
-          text: this.form.title
-        })
+export default {
+  props: ['item'],
+  data () {
+    return {
+      form: _.cloneDeep(this.item.data) || {},
+      name: name,
+      dialogVisible: true,
+      rules: {
+        title: [
+          { required: true, message: '请输入远端电源标题', trigger: 'blur' }
+        ],
+        template: [
+          { required: true, message: '请输入远端电源内容', trigger: 'blur' }
+        ]
       }
     }
+  },
+  methods: {
+    onConfirm () {
+      this.$refs['data'].validate((valid) => {
+        if (valid) {
+          this.item.data = this.form
+          this.onClose()
+        }
+      })
+    },
+    onClose () {
+      this.dialogVisible = false
+      this.$emit('on-close', this.item)
+      this.item.updateItem({
+        text: this.form.title
+      })
+    }
   }
+}
 </script>

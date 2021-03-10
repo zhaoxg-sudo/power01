@@ -10,7 +10,7 @@ import * as util from './util'
 import * as d3 from 'd3'
 
 class Item {
-  constructor(params) {
+  constructor (params) {
     this.container = params.container
     this.id = params.id || util.makeId()
     this.x = params.x
@@ -50,7 +50,7 @@ class Item {
   /**
    * 删除元素
    */
-  remove() {
+  remove () {
     this._group.remove()
     this.onRemove(this)
   }
@@ -58,7 +58,7 @@ class Item {
   /**
    * 取消选中
    */
-  blur() {
+  blur () {
     this._group.classed('active', false)
   }
 
@@ -66,7 +66,7 @@ class Item {
    * 获取input句柄
    * @returns {null|*}
    */
-  getInputPort() {
+  getInputPort () {
     return this._input
   }
 
@@ -74,7 +74,7 @@ class Item {
    * 获取output句柄
    * @returns {null|*}
    */
-  getOutputPort() {
+  getOutputPort () {
     return this._output
   }
 
@@ -82,26 +82,26 @@ class Item {
    * 更新元素
    * @param params
    */
-  updateItem(params) {
+  updateItem (params) {
     let textWidth = util.getTextWidth(params.text) + 15
     let itemWidth = textWidth + 30
     this._group.select('rect').attr('width', itemWidth)
     this.title = params.text
     this._text.text(this.title).attr('x', textWidth / 2 + 30)
-    if(this._output) {
+    if (this._output) {
       this._output.attr('transform', `translate(${itemWidth - 5}, 10)`)
     }
     this.onDrag(this)
   }
 
-  getItemWidth() {
+  getItemWidth () {
     return parseInt(this._group.select('rect').attr('width'))
   }
 
   /**
    * 创建svg元素
    */
-  _createElement() {
+  _createElement () {
     let group = this.container.append('g')
       .attr('transform', `translate(${this.x}, ${this.y})`)
       .attr('class', 'item')
@@ -148,7 +148,7 @@ class Item {
       .attr('class', 'item_label')
       .attr('text-anchor', 'middle')
 
-    if(~['ACTION', 'FUNCTION'].indexOf(this.type)) {
+    if (~['ACTION', 'FUNCTION'].indexOf(this.type)) {
       let input = group.append('g').attr('transform', 'translate(-5, 10)').attr('class', 'port_input')
       this._input = input
       input.append('rect')
@@ -159,7 +159,7 @@ class Item {
         .attr('class', 'port')
     }
 
-    if(~['INPUT', 'FUNCTION'].indexOf(this.type)) {
+    if (~['INPUT', 'FUNCTION'].indexOf(this.type)) {
       let output = group.append('g').attr('transform', 'translate(115, 10)').attr('class', 'port_output')
       this._output = output
       output.append('rect')
@@ -175,34 +175,33 @@ class Item {
    * 绑定事件
    * @private
    */
-  _bindEvent() {
+  _bindEvent () {
     this._group.on('click', this._onClick.bind(this))
     this._group.on('dblclick', this._onDblclick.bind(this))
     this._group.on('mouseup', this._onMouseup.bind(this))
-    if(this._input) {
+    if (this._input) {
       this._input.on('mouseenter', this._onPortEnter)
       this._input.on('mouseleave', this._onPortLeave)
       this._input.on('mousedown', this._onPortMousedown.bind(this))
       this._input.on('mouseup', this._onPortMouseup.bind(this))
     }
-    if(this._output) {
+    if (this._output) {
       this._output.on('mouseenter', this._onPortEnter)
       this._output.on('mouseleave', this._onPortLeave)
       this._output.on('mousedown', this._onPortMousedown.bind(this))
       this._output.on('mouseup', this._onPortMouseup.bind(this))
     }
     let drag = d3.drag()
-      .on("start", this._onGroupDragstart.bind(this))
-      .on("drag", this._onGroupDrag.bind(this))
+      .on('start', this._onGroupDragstart.bind(this))
+      .on('drag', this._onGroupDrag.bind(this))
     this._group.call(drag)
-
   }
 
   /**
    * 鼠标进入连线句柄
    * @private
    */
-  _onPortEnter() {
+  _onPortEnter () {
     d3.select(this).select('rect').classed('port-hovered', true)
   }
 
@@ -210,7 +209,7 @@ class Item {
    * 鼠标离开连线句柄
    * @private
    */
-  _onPortLeave() {
+  _onPortLeave () {
     d3.select(this).select('rect').classed('port-hovered', false)
   }
 
@@ -218,7 +217,7 @@ class Item {
    * 鼠标按下连线句柄
    * @private
    */
-  _onPortMousedown() {
+  _onPortMousedown () {
     d3.event.stopPropagation()
     let portType = d3.select(d3.event.target.parentNode).attr('class').replace('port_', '')
     this.onPortMousedown(this, portType)
@@ -230,7 +229,7 @@ class Item {
    * 鼠标按钮抬在线句柄抬起
    * @private
    */
-  _onPortMouseup() {
+  _onPortMouseup () {
     d3.event.stopPropagation()
     let portType = d3.select(d3.event.target.parentNode).attr('class').replace('port_', '')
     this.onPortMouseup(this, portType)
@@ -240,7 +239,7 @@ class Item {
    * 开始拖拽
    * @private
    */
-  _onGroupDragstart() {
+  _onGroupDragstart () {
     this._dragDeltaX = d3.event.x - this.x
     this._dragDeltaY = d3.event.y - this.y
   }
@@ -249,7 +248,7 @@ class Item {
    * 正在拖拽
    * @private
    */
-  _onGroupDrag() {
+  _onGroupDrag () {
     this.x = d3.event.x - this._dragDeltaX
     this.y = d3.event.y - this._dragDeltaY
     this._group.raise().attr('transform', `translate(${this.x}, ${this.y})`)
@@ -259,7 +258,7 @@ class Item {
   /**
    * 点击当前元素
    */
-  _onClick() {
+  _onClick () {
     d3.event.stopPropagation()
     this._group.classed('active', true)
     this.onClick(this)
@@ -268,7 +267,7 @@ class Item {
   /**
    * 双击当前元素
    */
-  _onDblclick() {
+  _onDblclick () {
     d3.event.stopPropagation()
     this.onDblclick(this)
   }
@@ -277,7 +276,7 @@ class Item {
    * 鼠标按钮在元素位置抬起
    * @private
    */
-  _onMouseup() {
+  _onMouseup () {
     d3.event.stopPropagation()
     this.onMouseup(this)
   }

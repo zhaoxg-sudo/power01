@@ -1,6 +1,20 @@
 <template>
-  <el-dialog custom-class="topo-dialog" :close-on-click-modal="false" :title="`编辑 ${name[item.name]}`" :visible="dialogVisible" @close="onClose" width="580px" append-to-body>
-    <el-form :model="form" label-width="120px" ref="data" size="medium" :rules="rules">
+  <el-dialog
+    custom-class="topo-dialog"
+    :close-on-click-modal="false"
+    :title="`编辑 ${name[item.name]}`"
+    :visible="dialogVisible"
+    @close="onClose"
+    width="580px"
+    append-to-body
+  >
+    <el-form
+      :model="form"
+      label-width="120px"
+      ref="data"
+      size="medium"
+      :rules="rules"
+    >
       <el-form-item label="触发方式" prop="event">
         <el-select v-model="form.event" placeholder="请选择触发方式">
           <el-option value="data" label="设备上报状态"></el-option>
@@ -21,32 +35,32 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import { name } from '../enum'
+import _ from 'lodash'
+import { name } from '../enum'
 
-  export default {
-    props: ['item'],
-    data() {
-      return {
-        form: _.cloneDeep(this.item.data) || {},
-        name: name,
-        dialogVisible: true,
-        rules: {}
-      }
+export default {
+  props: ['item'],
+  data () {
+    return {
+      form: _.cloneDeep(this.item.data) || {},
+      name: name,
+      dialogVisible: true,
+      rules: {}
+    }
+  },
+  methods: {
+    onConfirm () {
+      this.$refs['data'].validate((valid) => {
+        if (valid) {
+          this.item.data = this.form
+          this.onClose()
+        }
+      })
     },
-    methods: {
-      onConfirm() {
-        this.$refs['data'].validate(valid => {
-          if (valid) {
-            this.item.data = this.form
-            this.onClose()
-          }
-        })
-      },
-      onClose() {
-        this.dialogVisible = false
-        this.$emit('on-close', this.item)
-      }
+    onClose () {
+      this.dialogVisible = false
+      this.$emit('on-close', this.item)
     }
   }
+}
 </script>

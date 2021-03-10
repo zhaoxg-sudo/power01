@@ -65,16 +65,16 @@
 </template>
 
 <script>
-  import { icon } from './enum'
+import { icon } from './enum'
 
-  export default {
-    name: 'item-list',
-    data() {
-      return {
-        icon
-      }
+export default {
+  name: 'item-list',
+  data () {
+    return {
+      icon
     }
   }
+}
 </script>
 
 <style lang="scss" type="text/scss" scoped>

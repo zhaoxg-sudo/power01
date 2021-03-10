@@ -11,7 +11,7 @@ import * as d3 from 'd3'
 import _ from 'lodash'
 
 class Chart {
-  constructor(params) {
+  constructor (params) {
     this.container = params.container
     this.onItemDblclick = params.onItemDblclick
 
@@ -28,7 +28,7 @@ class Chart {
    * 添加元素
    * @param params 元素属性
    */
-  addItem(params) {
+  addItem (params) {
     let item = new Item({
       container: this.container,
       id: params.id,
@@ -56,14 +56,14 @@ class Chart {
   /**
    * 获取所有元素
    */
-  getItems() {
+  getItems () {
     return this.list
   }
 
   /**
    * 存放已有元素
    */
-  setItems(items) {
+  setItems (items) {
     _.forEach(items, item => {
       item.inputIds = new Set(item.inputIds)
       item.outputIds = new Set(item.outputIds)
@@ -85,7 +85,7 @@ class Chart {
   /**
    * 绑定事件
    */
-  _bindEvent() {
+  _bindEvent () {
     this.container.on('mousemove', this._onMousemove.bind(this))
     this.container.on('mouseup', this._onMouseup.bind(this))
     this.container.on('click', this._onClick.bind(this))
@@ -99,7 +99,7 @@ class Chart {
    * @returns {Line}
    * @private
    */
-  _addLine(fromItem, fromPortType, targetItem, targetPortType) {
+  _addLine (fromItem, fromPortType, targetItem, targetPortType) {
     return new Line({
       container: this.container,
       fromItem: fromItem,
@@ -109,11 +109,10 @@ class Chart {
       onClick: this._onLineClick.bind(this)
     })
   }
-  
   /**
    * 鼠标按下连线具柄回调
    */
-  _onPortMousedown(fromItem, fromPortType) {
+  _onPortMousedown (fromItem, fromPortType) {
     this.currentLine = this._addLine(fromItem, fromPortType)
     this.drawingLine = true
   }
@@ -121,8 +120,8 @@ class Chart {
   /**
    * 鼠标在画板中移动
    */
-  _onMousemove() {
-    if(this.drawingLine && this.currentLine) {
+  _onMousemove () {
+    if (this.drawingLine && this.currentLine) {
       let coordinates = {
         x: d3.event.offsetX,
         y: d3.event.offsetY
@@ -138,13 +137,13 @@ class Chart {
    * @param targetPortType
    * @private
    */
-  _onPortMouseup(targetItem, targetPortType) {
-    if(!this.drawingLine) {
+  _onPortMouseup (targetItem, targetPortType) {
+    if (!this.drawingLine) {
       return
     }
 
     // 同一IO类型不允许连线
-    if(this.currentLine.fromPortType === targetPortType) {
+    if (this.currentLine.fromPortType === targetPortType) {
       this.currentLine.remove()
       this.currentLine = null
       return
@@ -170,15 +169,15 @@ class Chart {
    * @param targetItem
    * @private
    */
-  _onItemMouseup(targetItem) {
-    if(!this.drawingLine) return
+  _onItemMouseup (targetItem) {
+    if (!this.drawingLine) return
 
-    if(this.currentLine.fromPortType === 'input' && targetItem.getOutputPort()) {
+    if (this.currentLine.fromPortType === 'input' && targetItem.getOutputPort()) {
       this._onPortMouseup(targetItem, 'output')
       return
     }
 
-    if(this.currentLine.fromPortType === 'output' && targetItem.getInputPort()) {
+    if (this.currentLine.fromPortType === 'output' && targetItem.getInputPort()) {
       this._onPortMouseup(targetItem, 'input')
       return
     }
@@ -189,28 +188,28 @@ class Chart {
   /**
    * 鼠标在画板空白位置抬起
    */
-  _onMouseup() {
-    if(!this.drawingLine) return
+  _onMouseup () {
+    if (!this.drawingLine) return
 
-   if(this.currentLine) {
+    if (this.currentLine) {
       this.currentLine.remove()
       this.currentLine = null
     }
-   this.drawingLine = false
-   }
+    this.drawingLine = false
+  }
 
-   /**
+  /**
    * 元素移动回调事件
    * @param item
    */
-  _onItemDrag(item) {
-    if(item.inputPathIds.size) {
+  _onItemDrag (item) {
+    if (item.inputPathIds.size) {
       item.inputPathIds.forEach(id => {
         this.lineList[id].updatePath()
       })
     }
 
-    if(item.outputPathIds.size) {
+    if (item.outputPathIds.size) {
       item.outputPathIds.forEach(id => {
         this.lineList[id].updatePath()
       })
@@ -221,13 +220,13 @@ class Chart {
    * 画板点击事件
    * @private
    */
-  _onClick() {
-    if(this.selectedLine) {
+  _onClick () {
+    if (this.selectedLine) {
       this.selectedLine.blur()
       this.selectedLine = null
     }
 
-    if(this.selectedItem) {
+    if (this.selectedItem) {
       this.selectedItem.blur()
       this.selectedItem = null
     }
@@ -238,13 +237,13 @@ class Chart {
    * @param line 连线实例对象
    * @private
    */
-  _onLineClick(line) {
-    if(line === this.selectedLine) return
-    if(this.selectedLine) {
+  _onLineClick (line) {
+    if (line === this.selectedLine) return
+    if (this.selectedLine) {
       this.selectedLine.blur()
     }
     this.selectedLine = line
-    console.log("点击了连线", line)
+    console.log('点击了连线', line)
   }
 
   /**
@@ -252,13 +251,13 @@ class Chart {
    * @param item 元素实例对象
    * @private
    */
-  _onItemClick(item) {
-    if(item === this.selectedItem) return
-    if(this.selectedItem) {
+  _onItemClick (item) {
+    if (item === this.selectedItem) return
+    if (this.selectedItem) {
       this.selectedItem.blur()
     }
     this.selectedItem = item
-    console.log("点击了元素", item)
+    console.log('点击了元素', item)
   }
 
   /**
@@ -266,8 +265,8 @@ class Chart {
    * @param item 元素实例对象
    * @private
    */
-  _onItemDblclick(item) {
-    console.log("双击了元素", item)
+  _onItemDblclick (item) {
+    console.log('双击了元素', item)
     this.onItemDblclick(item)
   }
 
@@ -276,15 +275,15 @@ class Chart {
    * @param item 元素实例对象
    * @private
    */
-  _onItemRemove(item) {
-    if(item.inputPathIds.size) {
+  _onItemRemove (item) {
+    if (item.inputPathIds.size) {
       item.inputPathIds.forEach(id => {
         this.lineList[id].remove()
         delete this.lineList[id]
       })
     }
 
-    if(item.outputPathIds.size) {
+    if (item.outputPathIds.size) {
       item.outputPathIds.forEach(id => {
         this.lineList[id].remove()
         delete this.lineList[id]
@@ -296,16 +295,16 @@ class Chart {
    * 键盘事件
    * @private
    */
-  _onKeyup() {
-    switch(d3.event.keyCode) {
+  _onKeyup () {
+    switch (d3.event.keyCode) {
       case 8:
       case 46:
-        if(this.selectedLine) {
+        if (this.selectedLine) {
           this.selectedLine.remove()
           delete this.lineList[this.selectedLine.id]
           this.selectedLine = null
         }
-        if(this.selectedItem) {
+        if (this.selectedItem) {
           this.selectedItem.remove()
           delete this.list[this.selectedItem.id]
           this.selectedItem = null

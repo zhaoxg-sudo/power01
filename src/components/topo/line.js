@@ -10,7 +10,7 @@ import * as util from './util'
 import * as d3 from 'd3'
 
 class Line {
-  constructor(params) {
+  constructor (params) {
     this.container = params.container
     this.id = util.makeId()
     this.fromPortType = params.fromPortType
@@ -30,26 +30,26 @@ class Line {
    * 绘制连线
    * @param _targetPosition 目标坐标，如果targetPosition未传直接使用targetPort的坐标
    */
-  updatePath(_targetPosition) {
+  updatePath (_targetPosition) {
     let fromPortPosition = this._getPortPosition(this.fromPortType, this.fromItem)
     let targetPosition = _targetPosition || this._getPortPosition(this.targetPortType, this.targetItem)
     let path = d3.path()
     let deltaX = fromPortPosition.x - targetPosition.x
     let bezierX = deltaX * 0.5
-    if((this.fromPortType === 'input' && deltaX > 0) || (this.fromPortType === 'output' && deltaX < 0)) {
-      bezierX = - bezierX
+    if ((this.fromPortType === 'input' && deltaX > 0) || (this.fromPortType === 'output' && deltaX < 0)) {
+      bezierX = -bezierX
     }
     path.moveTo(fromPortPosition.x, fromPortPosition.y)
     path.bezierCurveTo(fromPortPosition.x + bezierX, fromPortPosition.y, targetPosition.x - bezierX, targetPosition.y, targetPosition.x, targetPosition.y)
-    this.path.attr("d", path)
+    this.path.attr('d', path)
   }
 
   /**
    * 删除连线
    */
-  remove() {
+  remove () {
     this.path.remove()
-    if(this.fromItem && this.targetItem) {
+    if (this.fromItem && this.targetItem) {
       this.fromItem[this.fromPortType + 'Ids'].delete(this.targetItem.id)
       this.fromItem[this.fromPortType + 'PathIds'].delete(this.id)
       this.targetItem[this.targetPortType + 'Ids'].delete(this.fromItem.id)
@@ -60,7 +60,7 @@ class Line {
   /**
    * 取消选中
    */
-  blur() {
+  blur () {
     this.path.classed('active', false)
   }
 
@@ -68,15 +68,15 @@ class Line {
    * 创建线条元素
    * @private
    */
-  _createElement() {
-    this.path = this.container.append("path").attr('class', 'line').lower()
+  _createElement () {
+    this.path = this.container.append('path').attr('class', 'line').lower()
   }
 
   /**
    * 绑定事件
    * @private
    */
-  _bindEvent() {
+  _bindEvent () {
     this.path.on('click', this._onClick.bind(this))
   }
 
@@ -84,7 +84,7 @@ class Line {
    * 点击事件
    * @private
    */
-  _onClick() {
+  _onClick () {
     d3.event.stopPropagation()
     this.path.classed('active', true)
     this.onClick(this)
@@ -97,7 +97,7 @@ class Line {
    * @returns {{x: *, y: *}}
    * @private
    */
-  _getPortPosition(type, item) {
+  _getPortPosition (type, item) {
     let delta = {
       x: type === 'input' ? portDelta.INPUT_X : item.getItemWidth(),
       y: portDelta.Y
