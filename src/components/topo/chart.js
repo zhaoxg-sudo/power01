@@ -20,7 +20,7 @@ class Chart {
     this.drawingLine = false
     this.currentLine = null
     this.selectedLine = null
-
+    this.selectedItem = null
     this._bindEvent()
   }
 
@@ -57,6 +57,23 @@ class Chart {
    * 获取所有元素
    */
   getItems () {
+    return this.list
+  }
+
+  /**
+   * 获取所有元素
+   */
+  getLines () {
+    return this.lineList
+  }
+  /**
+   * 删除元素
+   */
+  delItem (item) {
+    console.log('chart.js 删除的list：', this.list[item.id])
+    this.onItemRemove(item)
+    item.remove()
+    delete this.list[item.id]
     return this.list
   }
 
@@ -276,21 +293,48 @@ class Chart {
    * @private
    */
   _onItemRemove (item) {
+    console.log('item input line list=', item.inputPathIds)
     if (item.inputPathIds.size) {
       item.inputPathIds.forEach(id => {
+        console.log('inputPathIds', id)
+        console.log('inputPathIds 的line对象', this.lineList[id])
         this.lineList[id].remove()
         delete this.lineList[id]
       })
     }
 
     if (item.outputPathIds.size) {
+      console.log('item output line list=', item.outputPathIds)
       item.outputPathIds.forEach(id => {
         this.lineList[id].remove()
         delete this.lineList[id]
       })
     }
   }
+  /**
+   * 当元素删除时回调事件
+   * @param item 元素实例对象
+   * @private
+   */
+  onItemRemove (item) {
+    console.log('item input line list=', item.inputPathIds)
+    if (item.inputPathIds.size) {
+      item.inputPathIds.forEach(async id => {
+        console.log('inputPathIds', id)
+        console.log('inputPathIds 的line对象', this.lineList[id])
+        await this.lineList[id].remove()
+        delete this.lineList[id]
+      })
+    }
 
+    if (item.outputPathIds.size) {
+      console.log('item output line list=', item.outputPathIds)
+      item.outputPathIds.forEach(async id => {
+        await this.lineList[id].remove()
+        delete this.lineList[id]
+      })
+    }
+  }
   /**
    * 键盘事件
    * @private

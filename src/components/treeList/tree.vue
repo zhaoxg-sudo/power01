@@ -85,7 +85,7 @@ export default {
           console.log(data[0]['label'])
           // 初始化树对象
           this.TreeChange({data: data[0], node: {}})
-            .then((res) => { console.log(res) })
+            .then((res) => {})
           //  循环出默认展开项的ID
           for (let i in data) {
             this.defaultExpanded.push(data[i]['label'])

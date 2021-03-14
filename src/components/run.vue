@@ -1,13 +1,16 @@
 <template>
   <div>
-      <h1>{{msg}}</h1>
-      <topo></topo>
+      <!-- <h4>{{msg}}</h4> -->
+      <div class="middleCon">
+        <topo ></topo>
+      </div>
   </div>
 </template>
 
 <script>
 import $ from 'jquery'
 import topo from './topo/topo.vue'
+// import { mapGetters } from 'vuex'
 export default {
   name: 'run',
   data () {

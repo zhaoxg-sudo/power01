@@ -40,7 +40,7 @@ export default {
     this.$nextTick(async () => {
       this.getHeightsWidths()
       this.sockets.subscribe('alarm', (data) => {
-        console.log(data)
+        // console.log(data)
         _this.msg = data
       })
       this.instance({

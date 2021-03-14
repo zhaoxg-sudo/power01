@@ -3,7 +3,7 @@
     <item-list id="item-list-left"></item-list>
     <div id="chart-container">
       <div class="toolbar">
-        <el-button type="primary" size="medium">返回</el-button>
+        <el-button type="primary" size="medium" @click="itemRemove()">删除</el-button>
         <el-button type="primary" size="medium" @click="save()">保存</el-button>
       </div>
       <svg
@@ -53,6 +53,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import * as d3 from 'd3'
 import Chart from './chart'
 import itemList from './item-list.vue'
@@ -80,6 +82,7 @@ export default {
   name: 'topo',
   data () {
     return {
+      currentTreeNodeID: '',
       draged: false,
       editItem: null,
       dialog: {
@@ -102,85 +105,35 @@ export default {
       onItemDblclick: this.onItemDblclick
     })
 
-    this.loadData()
+    // this.loadData()
+    this.loadDataDemo()
     this.bindDragEvent()
-
-    let l1 = chart.addItem({
-      x: 85,
-      y: 175,
-      name: 'CUSTOM_DATA',
-      type: 'INPUT'
+  },
+  computed: {
+    ...mapGetters({
+      updateState: 'updateState',
+      TreeData: 'TreeData'
     })
-    let r1 = chart.addItem({
-      x: 455,
-      y: 100,
-      name: 'EMAIL',
-      type: 'ACTION'
-    })
-    let r2 = chart.addItem({
-      x: 455,
-      y: 250,
-      name: 'EMAIL',
-      type: 'ACTION'
-    })
-    l1.updateItem({
-      text: '局端直流电源1'
-    })
-    r1.updateItem({
-      text: '远端直流电源1'
-    })
-    r2.updateItem({
-      text: '远端直流电源2'
-    })
-    // chart.addItem({
-    //   x: 255,
-    //   y: 250,
-    //    name: 'LOGIC_RULE',
-    //    type: 'FUNCTION'
-    // })
-    let line1 = chart._addLine(l1, 'output', r1, 'input')
-    let line2 = chart._addLine(l1, 'output', r2, 'input')
-
-    console.log('_input', r1._input)
-    console.log('item', l1)
-
-    line1.updatePath()
-    line1.path.classed('active', false)
-    line1.targetPortType = 'input'
-    line1.targetItem = r1
-    line1.fromItem['inputIds'].add(line1.targetItem.id)
-    line1.fromItem['inputPathIds'].add(line1.id)
-    line1.targetItem['inputIds'].add(line1.fromItem.id)
-    line1.targetItem['inputPathIds'].add(line1.id)
-    chart.lineList[line1.id] = line1
-    chart.drawingLine = false
-
-    line2.updatePath()
-    line2.path.classed('active', false)
-    line2.targetPortType = 'input'
-    line2.targetItem = r2
-    line2.fromItem['inputIds'].add(line2.targetItem.id)
-    line2.fromItem['inputPathIds'].add(line2.id)
-    line2.targetItem['inputIds'].add(line2.fromItem.id)
-    line2.targetItem['inputPathIds'].add(line2.id)
-    chart.lineList[line2.id] = line2
-    chart.drawingLine = false
-
-    // line2.updatePath()
-    // line2.path.classed('active', false)
-    // line2.targetPortType = 'input'
-    // line2.targetItem = r2
-    // line2.fromItem['inputIds'].add(line2.targetItem.id)
-    // line2.fromItem['inputPathIs'].add(line2.id)
-    // line2.targetItem['inputIds'].add(line2.fromItem.id)
-    // line2.targetItem['inputPathIds'].add(line2.id)
-    // chart.lineList[line2.id] = line2
-    // chart.drawingLine = false
-
-    console.log('line1', line1)
-    console.log('line2', line2)
-
-    // this.bindDragEvent()
+  },
+  watch: {
+    'TreeData': {
+      handler: async function (data) {
+        console.log('topo model has watched  tree data id ,labal:=', data.catalogid, data.label)
+        this.currentTreeNodeID = data.label
+        // refresh chart
+        let list = chart.getItems()
+        let line = chart.getLines()
+        console.log('所有item：', list)
+        console.log('所有line：', line)
+        await this.refreshChart()
+        this.$nextTick(function () {
+          // this.loadData()
+          this.loadDataDemo()
+          this.bindDragEvent()
+        })
+      },
+      deep: true
+    }
   },
   methods: {
     bindDragEvent () {
@@ -233,13 +186,127 @@ export default {
         )
       }
     },
+    refreshChart () {
+      // console.log('refreshChart list=', list)
+      for (var element in chart.list) {
+        console.log('chart item list=', element, chart.list[element])
+        this.itemDelete(chart.list[element])
+        // let delItem = list[element]
+        // // del 关联的线
+        // chart._onItemRemove(delItem)
+        // console.log('删除的delItem=', delItem)
+        // // 删除chart中的item
+        // // let list = chart.delItem(selectedItem)
+        // // console.log('删除后的item list：', list)
+        // // 删除D3中的item
+        // delItem.remove()
+        // console.log('删除后的chart item list：', chart.list)
+        // // 删除chart中的item
+        // delete chart.list[delItem]
+        // // let list = chart.delItem(selectedItem)
+        // console.log('删除后的item list：', chart.list)
+      }
+      return chart.list
+    },
     save () {
       console.log(chart.getItems())
       // 项目中替换为持久存储
       localStorage.setItem('items', JSON.stringify(chart.getItems()))
     },
+    itemDelete (item) {
+      if (item) {
+        console.log('当前要删除的item=', item)
+        // console.log('删除后的item list：', list)
+        // 删除D3中的item
+        let allList = chart.delItem(item)
+        console.log('删除D3后的的chart item list：', allList)
+        // 删除chart中的item
+        // del 关联的线
+        // chart._onItemRemove(item)
+      }
+    },
+    itemRemove () {
+      if (chart.selectedItem) {
+        let item = chart.selectedItem
+        console.log('当前要删除的selected item=', item)
+        // console.log('删除后的item list：', list)
+        // 删除D3中的item
+        chart.selectedItem.remove()
+        console.log('删除D3后的的chart item list：', chart.list)
+        // 删除chart中的item
+        console.log('当前要删除的item id=', item.id)
+        delete chart.list[item.id]
+        // let list = chart.delItem(selectedItem)
+        console.log('删除后的item list：', chart.list)
+        // del 关联的线
+        // chart._onItemRemove(selectedItem)
+      }
+    },
     loadData () {
       chart.setItems(JSON.parse(localStorage.getItem('items')))
+    },
+    loadDataDemo () {
+      let l1 = chart.addItem({
+        x: 85,
+        y: 175,
+        name: 'CUSTOM_DATA',
+        type: 'INPUT'
+      })
+      let r1 = chart.addItem({
+        x: 455,
+        y: 100,
+        name: 'EMAIL',
+        type: 'ACTION'
+      })
+      let r2 = chart.addItem({
+        x: 455,
+        y: 250,
+        name: 'EMAIL',
+        type: 'ACTION'
+      })
+      l1.updateItem({
+        text: '局端直流电源1'
+      })
+      r1.updateItem({
+        text: '远端直流电源1'
+      })
+      r2.updateItem({
+        text: '远端直流电源2'
+      })
+      let line1 = chart._addLine(l1, 'output', r1, 'input')
+      let line2 = chart._addLine(l1, 'output', r2, 'input')
+
+      console.log('新建的_output', l1._output)
+      console.log('新建的_input1', r1._input)
+      console.log('新建的_input2', r2._input)
+      console.log('新建的item1', l1)
+      console.log('新建的item2', r1)
+      console.log('新建的item3', r2)
+
+      line1.updatePath()
+      line1.path.classed('active', false)
+      line1.targetPortType = 'input'
+      line1.targetItem = r1
+      line1.fromItem['inputIds'].add(line1.targetItem.id)
+      line1.fromItem['inputPathIds'].add(line1.id)
+      line1.targetItem['inputIds'].add(line1.fromItem.id)
+      line1.targetItem['inputPathIds'].add(line1.id)
+      chart.lineList[line1.id] = line1
+      chart.drawingLine = false
+
+      line2.updatePath()
+      line2.path.classed('active', false)
+      line2.targetPortType = 'input'
+      line2.targetItem = r2
+      line2.fromItem['inputIds'].add(line2.targetItem.id)
+      line2.fromItem['inputPathIds'].add(line2.id)
+      line2.targetItem['inputIds'].add(line2.fromItem.id)
+      line2.targetItem['inputPathIds'].add(line2.id)
+      chart.lineList[line2.id] = line2
+      chart.drawingLine = false
+
+      console.log('新建的line1', line1)
+      console.log('新建的line2', line2)
     },
     onItemDblclick (item) {
       this.editItem = item

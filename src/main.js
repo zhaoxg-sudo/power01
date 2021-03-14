@@ -31,7 +31,7 @@ import './assets/css/setting.css'
 Vue.use(ElementUI)
 Vue.use(new VueSocketio({
 
-  debug: true,
+  debug: false,
 
   connection: 'http://power.ieyeplus.com:7001'
 
