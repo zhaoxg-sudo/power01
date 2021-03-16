@@ -18,6 +18,7 @@ class Item {
     this.name = params.name
     this.title = params.title
     this.type = type[params.type]
+    this.catalogid = params.catalogid
 
     // 记录input/output元素的id和连线对象
     this.inputIds = params.inputIds || new Set()
@@ -87,6 +88,7 @@ class Item {
     let itemWidth = textWidth + 30
     this._group.select('rect').attr('width', itemWidth)
     this.title = params.text
+    this.catalogid = params.catalogid
     this._text.text(this.title).attr('x', textWidth / 2 + 30)
     if (this._output) {
       this._output.attr('transform', `translate(${itemWidth - 5}, 10)`)

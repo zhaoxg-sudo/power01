@@ -37,6 +37,7 @@ class Chart {
       name: params.name,
       text: params.text,
       type: params.type,
+      catalogid: params.catalogid,
       inputIds: params.inputIds,
       outputIds: params.outputIds,
       data: params.data,

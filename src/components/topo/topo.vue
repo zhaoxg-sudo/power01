@@ -83,6 +83,7 @@ export default {
   data () {
     return {
       currentTreeNodeID: '',
+      currentCatalogID: '',
       draged: false,
       editItem: null,
       dialog: {
@@ -93,7 +94,10 @@ export default {
         APP: false,
         HTTP: false,
         EMAIL: false
-      }
+      },
+      instance: this.$ajax.create({
+        baseURL: 'http://power.ieyeplus.com:7001/'
+      })
     }
   },
   mounted () {
@@ -106,7 +110,7 @@ export default {
     })
 
     // this.loadData()
-    this.loadDataDemo()
+    // this.loadDataDemo()
     this.bindDragEvent()
   },
   computed: {
@@ -120,6 +124,7 @@ export default {
       handler: async function (data) {
         console.log('topo model has watched  tree data id ,labal:=', data.catalogid, data.label)
         this.currentTreeNodeID = data.label
+        this.currentCatalogID = data.catalogid
         // refresh chart
         let list = chart.getItems()
         let line = chart.getLines()
@@ -127,8 +132,8 @@ export default {
         console.log('所有line：', line)
         await this.refreshChart()
         this.$nextTick(function () {
-          // this.loadData()
-          this.loadDataDemo()
+          this.loadData()
+          // this.loadDataDemo()
           this.bindDragEvent()
         })
       },
@@ -209,41 +214,41 @@ export default {
       return chart.list
     },
     save () {
-      console.log(chart.getItems())
-      // 项目中替换为持久存储
-      localStorage.setItem('items', JSON.stringify(chart.getItems()))
-    },
-    itemDelete (item) {
-      if (item) {
-        console.log('当前要删除的item=', item)
-        // console.log('删除后的item list：', list)
-        // 删除D3中的item
-        let allList = chart.delItem(item)
-        console.log('删除D3后的的chart item list：', allList)
-        // 删除chart中的item
-        // del 关联的线
-        // chart._onItemRemove(item)
-      }
-    },
-    itemRemove () {
-      if (chart.selectedItem) {
-        let item = chart.selectedItem
-        console.log('当前要删除的selected item=', item)
-        // console.log('删除后的item list：', list)
-        // 删除D3中的item
-        chart.selectedItem.remove()
-        console.log('删除D3后的的chart item list：', chart.list)
-        // 删除chart中的item
-        console.log('当前要删除的item id=', item.id)
-        delete chart.list[item.id]
-        // let list = chart.delItem(selectedItem)
-        console.log('删除后的item list：', chart.list)
-        // del 关联的线
-        // chart._onItemRemove(selectedItem)
-      }
+      let itemList = chart.getItems()
+      // 存入数据库
+      let items = {}
+      let catalogid = this.currentCatalogID
+      // for (let id in itemList) {
+      //   catalogid = itemList[id].catalogid
+      // }
+      console.log('这次存储的catalogid：=', catalogid)
+      console.log('这次存储的item列表：=', itemList)
+      items.catalogid = catalogid
+      items.itemdata = JSON.stringify(itemList)
+      this.instance({
+        url: 'topo/additem',
+        method: 'post',
+        data: items
+      }).then(res => {
+        console.log('数据库存储成功！', res)
+      })
+      // localStorage
+      // localStorage.setItem('items', JSON.stringify(chart.getItems()))
     },
     loadData () {
-      chart.setItems(JSON.parse(localStorage.getItem('items')))
+      let catalogid = this.currentCatalogID
+      this.instance({
+        url: 'topo/getitem/' + catalogid,
+        method: 'get'
+      }).then(res => {
+        if (res.data.code === 1) {
+          chart.setItems((res.data.result.itemdata))
+          console.log('从数据库catalog item ，获取返回成功！', res)
+        } else {
+          console.log('从数据库catalog item ,无数据！！！！！', res)
+        }
+      })
+      // chart.setItems(JSON.parse(localStorage.getItem('items')))
     },
     loadDataDemo () {
       let l1 = chart.addItem({
@@ -265,13 +270,16 @@ export default {
         type: 'ACTION'
       })
       l1.updateItem({
-        text: '局端直流电源1'
+        text: '局端直流电源1',
+        catalogid: '123456'
       })
       r1.updateItem({
-        text: '远端直流电源1'
+        text: '远端直流电源1',
+        catalogid: '123456'
       })
       r2.updateItem({
-        text: '远端直流电源2'
+        text: '远端直流电源2',
+        catalogid: '123456'
       })
       let line1 = chart._addLine(l1, 'output', r1, 'input')
       let line2 = chart._addLine(l1, 'output', r2, 'input')
@@ -307,6 +315,35 @@ export default {
 
       console.log('新建的line1', line1)
       console.log('新建的line2', line2)
+    },
+    itemDelete (item) {
+      if (item) {
+        console.log('当前要删除的item=', item)
+        // console.log('删除后的item list：', list)
+        // 删除D3中的item
+        let allList = chart.delItem(item)
+        console.log('删除D3后的的chart item list：', allList)
+        // 删除chart中的item
+        // del 关联的线
+        // chart._onItemRemove(item)
+      }
+    },
+    itemRemove () {
+      if (chart.selectedItem) {
+        let item = chart.selectedItem
+        console.log('当前要删除的selected item=', item)
+        // console.log('删除后的item list：', list)
+        // 删除D3中的item
+        chart.selectedItem.remove()
+        console.log('删除D3后的的chart item list：', chart.list)
+        // 删除chart中的item
+        console.log('当前要删除的item id=', item.id)
+        delete chart.list[item.id]
+        // let list = chart.delItem(selectedItem)
+        console.log('删除后的item list：', chart.list)
+        // del 关联的线
+        // chart._onItemRemove(selectedItem)
+      }
     },
     onItemDblclick (item) {
       this.editItem = item
