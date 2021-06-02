@@ -29,6 +29,7 @@ import './assets/css/setting.css'
 // import './assets/js/effect.js'
 
 Vue.use(ElementUI)
+// web socket
 Vue.use(new VueSocketio({
 
   debug: false,
@@ -38,7 +39,7 @@ Vue.use(new VueSocketio({
 }))
 Vue.prototype.$ajax = axios
 
-Vue.config.productionTip = false
+Vue.config.productionTip = true
 
 /* eslint-disable no-new */
 new Vue({

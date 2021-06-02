@@ -109,7 +109,7 @@ export default {
       onItemDblclick: this.onItemDblclick
     })
 
-    // this.loadData()
+    this.loadData()
     // this.loadDataDemo()
     this.bindDragEvent()
   },
@@ -125,14 +125,15 @@ export default {
         console.log('topo model has watched  tree data id ,labal:=', data.catalogid, data.label)
         this.currentTreeNodeID = data.label
         this.currentCatalogID = data.catalogid
-        // refresh chart
+        // refresh chart to blank
         let list = chart.getItems()
         let line = chart.getLines()
         console.log('所有item：', list)
         console.log('所有line：', line)
         await this.refreshChart()
         this.$nextTick(function () {
-          this.loadData()
+          // new topo load from DB
+          this.loadData(this.currentCatalogID)
           // this.loadDataDemo()
           this.bindDragEvent()
         })
@@ -191,28 +192,16 @@ export default {
         )
       }
     },
+    // 刷新画布为空白
     refreshChart () {
       // console.log('refreshChart list=', list)
       for (var element in chart.list) {
         console.log('chart item list=', element, chart.list[element])
         this.itemDelete(chart.list[element])
-        // let delItem = list[element]
-        // // del 关联的线
-        // chart._onItemRemove(delItem)
-        // console.log('删除的delItem=', delItem)
-        // // 删除chart中的item
-        // // let list = chart.delItem(selectedItem)
-        // // console.log('删除后的item list：', list)
-        // // 删除D3中的item
-        // delItem.remove()
-        // console.log('删除后的chart item list：', chart.list)
-        // // 删除chart中的item
-        // delete chart.list[delItem]
-        // // let list = chart.delItem(selectedItem)
-        // console.log('删除后的item list：', chart.list)
       }
       return chart.list
     },
+    // 保存画布元素到数据库
     save () {
       let itemList = chart.getItems()
       // 存入数据库
@@ -235,19 +224,25 @@ export default {
       // localStorage
       // localStorage.setItem('items', JSON.stringify(chart.getItems()))
     },
-    loadData () {
-      let catalogid = this.currentCatalogID
-      this.instance({
-        url: 'topo/getitem/' + catalogid,
-        method: 'get'
-      }).then(res => {
-        if (res.data.code === 1) {
-          chart.setItems((res.data.result.itemdata))
-          console.log('从数据库catalog item ，获取返回成功！', res)
-        } else {
-          console.log('从数据库catalog item ,无数据！！！！！', res)
-        }
-      })
+    // 从数据库中，导入站点的元素到当前画布
+    loadData (id) {
+      let catalogid = id
+      if (catalogid) {
+        this.instance({
+          url: 'topo/getitem/' + catalogid,
+          method: 'get'
+        }).then(res => {
+          if (res.data.code === 1) {
+            // 把数据库中的拓扑图保存到当前画布内存中
+            chart.setItems((res.data.result.itemdata))
+            console.log('从数据库catalog item ，获取返回成功！', res)
+          } else {
+            console.log('从数据库catalog item ,无数据！！！！！', res)
+          }
+        })
+      } else {
+        console.log('catalog id ,为空！！！！！')
+      }
       // chart.setItems(JSON.parse(localStorage.getItem('items')))
     },
     loadDataDemo () {

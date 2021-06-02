@@ -36,7 +36,7 @@ export default {
         {'catalogId': 68, 'parentId': 67, 'name': '二级目录3'}
       ], */
       data: [
-        {'catalogId': 1, 'parentId': 0, 'name': '站点设备树'},
+        {'catalogId': 1, 'parentId': -1, 'name': '站点设备树'},
         {'catalogId': 58, 'parentId': 1, 'name': '棋盘梁隧道1'},
         {'catalogId': 59, 'parentId': 58, 'name': '南向局端直流电源1'},
         {'catalogId': 60, 'parentId': 59, 'name': '南向远端1'},

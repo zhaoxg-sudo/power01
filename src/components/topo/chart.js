@@ -62,7 +62,7 @@ class Chart {
   }
 
   /**
-   * 获取所有元素
+   * 获取所有连线
    */
   getLines () {
     return this.lineList
