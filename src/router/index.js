@@ -4,7 +4,7 @@ import Router from 'vue-router'
 // import Nprogress from 'nprogress'
 // import 'nprogress.css'
 
-import HelloWorld from '@/components/HelloWorld'
+import power from '@/components/power'
 import alarm from '@/components/alarm'
 import run from '@/components/run'
 import setting from '@/components/setting/index'
@@ -26,7 +26,7 @@ const router = new Router({
     {
       path: '/',
       redirect: '/run',
-      component: HelloWorld,
+      component: power,
       children: [
         {
           path: '/run',

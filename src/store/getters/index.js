@@ -7,6 +7,9 @@ export default {
   updateState: state => {
     return state.updateState
   },
+  treeListOpenedState: state => {
+    return state.treeListOpenedState
+  },
   TreeData: state => {
     return state.TreeData
   },

@@ -76,7 +76,7 @@ export default {
     refresh () {
       this.$ajax.get('http://power.ieyeplus.com:7001/' + 'localall')
         .then((res) => {
-          console.log(res.data)
+          console.log('从数据库读取的catalog数据=', res.data)
           // let data = res.data
           this.treeData = this.actionGetCatalog(res.data)
           // this.treeData = this.actionGetCatalog(this.data)

@@ -31,7 +31,7 @@ export default {
   },
   watch: {
     stationSatus: (stationStatus) => {
-      console.log(stationStatus)
+      console.log('structureTree的修改状态：', stationStatus)
     }
   },
   data () {
@@ -226,7 +226,7 @@ export default {
     },
     renderContent (h, { node, data, store }) {
       console.log('enter into tree update status........')
-      console.log(this.stationStatus)
+      console.log('renderContent:', this.stationStatus)
       if (this.stationStatus === 'change') {
         let neww = false
         if (node.label === '新建站点') {

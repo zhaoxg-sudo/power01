@@ -48,7 +48,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 div {
-  border: 5px solid red;
+  border: 5px solid #4e545a;
   padding: 0;
   margin: 0;
 }

@@ -14,5 +14,8 @@ export default {
   // 单击树
   TreeChange ({commit}, val) {
     commit('TREECHANGE', val)
+  },
+  treeListOpenedState ({commit}, status) {
+    commit('TREE_LIST_OPENED_STATE', status)
   }
 }

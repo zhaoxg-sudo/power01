@@ -1,6 +1,6 @@
 <template>
   <div id="topo-container">
-    <item-list id="item-list-left"></item-list>
+    <!-- <item-list id="item-list-left"></item-list> -->
     <div id="chart-container">
       <div class="toolbar">
         <el-button type="primary" size="medium" @click="itemRemove()">删除</el-button>
@@ -108,8 +108,9 @@ export default {
       container: container,
       onItemDblclick: this.onItemDblclick
     })
-
-    this.loadData()
+    this.currentCatalogID = this.TreeData.catalogid
+    // console.log('TreeData:=', this.TreeData)
+    this.loadData(this.currentCatalogID)
     // this.loadDataDemo()
     this.bindDragEvent()
   },

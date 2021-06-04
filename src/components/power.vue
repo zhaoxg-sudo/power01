@@ -16,7 +16,7 @@ import footNav from './footNav/index.vue'
 import switchLeft from './switchLeft/index.vue'
 import treeList from './treeList/index.vue'
 export default {
-  name: 'HelloWorld',
+  name: 'power',
   data () {
     return {
       msg: '还没收到websockt数据',
@@ -39,6 +39,9 @@ export default {
     this.username = 'power'
     this.$nextTick(async () => {
       this.getHeightsWidths()
+      // 初始化，默认展开树
+      $('.orgTreeList').removeClass('treeListHide').addClass('treeListShow')
+      this.$store.dispatch('treeListOpenedState', 1)
       this.sockets.subscribe('alarm', (data) => {
         // console.log(data)
         _this.msg = data

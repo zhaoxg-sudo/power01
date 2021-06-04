@@ -10,6 +10,7 @@ export default {
     open () {
       $('.orgTreeList').removeClass('treeListHide').addClass('treeListShow')
       console.log('点击了树展开按钮')
+      this.$store.dispatch('treeListOpenedState', 1)
       var contentWidth = $(window).width()
       var treeWidth = $('.orgTreeList').width()
       $('.content').css('left', treeWidth)

@@ -207,7 +207,7 @@ export default {
       } else {
         this.stationStatus = 'show'
       }
-      console.log('now update status =', this.stationStatus)
+      console.log('userManager.vue now update status =', this.stationStatus)
     },
     getHeights () {
       //  高度判断

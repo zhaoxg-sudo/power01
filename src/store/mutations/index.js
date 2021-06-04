@@ -16,5 +16,8 @@ export default {
   TREECHANGE (state, val) {
     state.TreeData = val.data
     state.TreeObj = val.node
+  },
+  TREE_LIST_OPENED_STATE (state, val) {
+    state.treeListOpenedState = val
   }
 }

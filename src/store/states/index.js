@@ -9,7 +9,7 @@ export default {
   LoginId: '',
   // 点击树菜单的 data
   updateState: 0,
-  treeChanged: 0,
+  treeListOpenedState: 1,
   TreeData: {},
   // 点击树菜单的 obj
   TreeObj: {}

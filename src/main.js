@@ -38,8 +38,10 @@ Vue.use(new VueSocketio({
 
 }))
 Vue.prototype.$ajax = axios
+// enable vue tools
+Vue.config.devtools = true
 
-Vue.config.productionTip = true
+Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
