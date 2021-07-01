@@ -2,10 +2,10 @@
   <div class="bottomTools">
     <div class="userInfo">
       <div class="userName">
-        <span>您好 {{username}}<a @click="logout()"> [退出]</a>
+        <span>Hi {{username}}<a @click="logout()"> [退出]</a>
           <a @click="setting()"><i class="fa fa-cogs"></i>配置管理</a>
-<a @click="$router.go(0)"><i class="fa fa-refresh"></i>刷新页面</a>
-          &nbsp;  &nbsp;&nbsp; copyright©北京三合云海科技有限责任公司  &nbsp;&nbsp; v0.7.01
+          <a @click="$router.go(0)"><i class="fa fa-refresh"></i>刷新页面</a>
+          &nbsp;  &nbsp;&nbsp; copyright©北京三合云海科技有限责任公司  &nbsp;&nbsp; v0.7.02 2021.0701
         </span>
       </div>
     </div>

@@ -1,10 +1,15 @@
 <template>
   <div id="topo-container">
     <!-- <item-list id="item-list-left"></item-list> -->
+    <!-- <div>{{this.runMsg}}</div> -->
     <div id="chart-container">
       <div class="toolbar">
+        <div>
+          <h3>{{this.runMsg}}</h3>
+        </div>
         <el-button type="primary" size="medium" @click="itemRemove()">删除</el-button>
         <el-button type="primary" size="medium" @click="save()">保存</el-button>
+        <el-button type="primary" size="medium" @click="runStatus()">运行状态</el-button>
       </div>
       <svg
         id="topo-chart"
@@ -83,6 +88,7 @@ export default {
   data () {
     return {
       currentTreeNodeID: '',
+      runMsg: 'runstatus',
       currentCatalogID: '',
       draged: false,
       editItem: null,
@@ -225,6 +231,27 @@ export default {
       // localStorage
       // localStorage.setItem('items', JSON.stringify(chart.getItems()))
     },
+    // d读取运行状态
+    runStatus () {
+      let catalogid = this.currentCatalogID
+      let _this = this
+      console.log('这次读取运行状态的catalogid：=', catalogid)
+      this.instance({
+        url: '/device/local/getrunstatus/' + catalogid,
+        method: 'get'
+      }).then(res => {
+        if (res.data.code === 1) {
+          console.log('res电源运行状态读取成功！', res)
+          let msg = res.data.result
+          console.log('msg电源运行状态读取成功！', msg)
+          _this.runMsg = '电源运行状态: ' + msg
+        } else {
+          console.log('电源运行状态读取失败？？？', res)
+          let msg = res.data.result
+          _this.runMsg = '电源运行状态: ' + msg
+        }
+      })
+    },
     // 从数据库中，导入站点的元素到当前画布
     loadData (id) {
       let catalogid = id
@@ -353,6 +380,10 @@ export default {
 </script>
 
 <style lang="scss" type="text/scss" scoped>
+h3 {
+  font-weight: normal;
+  background:darkorchid;
+  }
 .toolbar {
   position: absolute;
   right: 10px;

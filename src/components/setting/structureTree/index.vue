@@ -3,7 +3,7 @@
     <el-tree
       ref="tree"
       :data="treeData"
-      highlight-current
+      :highlight-current="true"
       :props="defaultProps"
       :default-expanded-keys="defaultExpanded"
       @node-click="handleNodeClick"
