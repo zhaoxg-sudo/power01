@@ -54,6 +54,7 @@ div {
 }
 h1, h2 {
   font-weight: normal;
+  background: darkred;
   }
 ul {
   list-style-type: none;

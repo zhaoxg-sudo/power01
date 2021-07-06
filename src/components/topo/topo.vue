@@ -1,15 +1,20 @@
 <template>
   <div id="topo-container">
     <!-- <item-list id="item-list-left"></item-list> -->
-    <!-- <div>{{this.runMsg}}</div> -->
+    <div>
+      <h4>{{this.runMsg}}</h4>
+    </div>
     <div id="chart-container">
       <div class="toolbar">
-        <div>
-          <h3>{{this.runMsg}}</h3>
-        </div>
-        <el-button type="primary" size="medium" @click="itemRemove()">删除</el-button>
-        <el-button type="primary" size="medium" @click="save()">保存</el-button>
-        <el-button type="primary" size="medium" @click="runStatus()">运行状态</el-button>
+        <!-- <el-button type="primary" size="medium" @click="itemRemove()">删除</el-button> -->
+        <!-- <el-button type="primary" size="medium" @click="save()">保存</el-button> -->
+        <el-button type="primary" size="medium" @click="runStatus()">get运行状态</el-button>
+        <el-button type="primary" size="medium" @click="getSetParam()">get设置参数</el-button>
+        <el-button type="primary" size="medium" @click="subModuleID()">get子模块ID</el-button>
+        <el-button type="primary" size="medium" @click="getAlarmData()">get报警信息</el-button>
+        <el-button type="primary" size="medium" @click="setPowerOn()">set电源开机</el-button>
+        <el-button type="primary" size="medium" @click="setPowerOff()">set电源关机</el-button>
+        <el-button type="primary" size="medium" @click="setPowerParam()">set电源参数</el-button>
       </div>
       <svg
         id="topo-chart"
@@ -231,7 +236,7 @@ export default {
       // localStorage
       // localStorage.setItem('items', JSON.stringify(chart.getItems()))
     },
-    // d读取运行状态
+    // 读取运行状态
     runStatus () {
       let catalogid = this.currentCatalogID
       let _this = this
@@ -244,11 +249,173 @@ export default {
           console.log('res电源运行状态读取成功！', res)
           let msg = res.data.result
           console.log('msg电源运行状态读取成功！', msg)
-          _this.runMsg = '电源运行状态: ' + msg
+          let msgJson = JSON.parse(msg)
+          let outv = ''
+          outv = msgJson.outv.toString()
+          console.log('msg电源运行状态读取成功！', outv)
+          _this.runMsg = '输出电压: ' + outv
         } else {
           console.log('电源运行状态读取失败？？？', res)
           let msg = res.data.result
           _this.runMsg = '电源运行状态: ' + msg
+        }
+      })
+    },
+    // 读取设置参数
+    getSetParam () {
+      let catalogid = this.currentCatalogID
+      let _this = this
+      console.log('这次读取设置参数的catalogid：=', catalogid)
+      this.instance({
+        url: '/device/local/getsetparam/' + catalogid,
+        method: 'get'
+      }).then(res => {
+        if (res.data.code === 1) {
+          console.log('res电源设置参数读取成功！', res)
+          let msg = res.data.result
+          console.log('msg电源设置参数读取成功！', msg)
+          let msgJson = JSON.parse(msg)
+          let setparamv = ''
+          setparamv = msgJson.setparamv.toString()
+          console.log('msg电源设置参数读取成功！', setparamv)
+          _this.runMsg = '设置电压值: ' + setparamv
+        } else {
+          console.log('电源设置参数读取失败？？？', res)
+          let msg = res.data.result
+          _this.runMsg = '设置电压值: ' + msg
+        }
+      })
+    },
+    // 读取子模块ID
+    subModuleID () {
+      let catalogid = this.currentCatalogID
+      let _this = this
+      console.log('这次读取子模块ID的catalogid：=', catalogid)
+      this.instance({
+        url: '/device/local/getsubmoduleid/' + catalogid,
+        method: 'get'
+      }).then(res => {
+        if (res.data.code === 1) {
+          console.log('res电源子模块ID读取成功！', res)
+          let msg = res.data.result
+          console.log('msg电源子模块ID读取成功！', msg)
+          let msgJson = JSON.parse(msg)
+          let submodulenum = ''
+          submodulenum = msgJson.submodulenum.toString()
+          console.log('msg电源子模块ID读取成功！', submodulenum)
+          _this.runMsg = '子模块ID数量: ' + submodulenum
+        } else {
+          console.log('电源子模块ID读取失败？？？', res)
+          let msg = res.data.result
+          _this.runMsg = '子模块ID数量: ' + msg
+        }
+      })
+    },
+    // 读取告警参数
+    getAlarmData () {
+      let catalogid = this.currentCatalogID
+      let _this = this
+      console.log('这次读取告警参数的catalogid：=', catalogid)
+      this.instance({
+        url: '/device/local/getalarmdata/' + catalogid,
+        method: 'get'
+      }).then(res => {
+        if (res.data.code === 1) {
+          console.log('res电源告警参数读取成功！', res)
+          let msg = res.data.result
+          console.log('msg电源告警参数读取成功！', msg)
+          let msgJson = JSON.parse(msg)
+          let alarmbyte2 = ''
+          alarmbyte2 = msgJson.alarmbyte2.poweronoff.toString()
+          console.log('msg电源告警参数读取成功！', alarmbyte2)
+          _this.runMsg = '告警字节2->poweronoff: ' + alarmbyte2
+        } else {
+          console.log('电源告警参数读取失败？？？', res)
+          let msg = res.data.result
+          _this.runMsg = '告警字节2: ' + msg
+        }
+      })
+    },
+    // 控制电源开机
+    setPowerOn () {
+      let catalogid = this.currentCatalogID
+      let _this = this
+      console.log('这次控制电源开机的catalogid：=', catalogid)
+      this.instance({
+        url: '/device/local/getpoweron/' + catalogid,
+        method: 'get'
+      }).then(res => {
+        if (res.data.code === 1) {
+          console.log('res控制电源开机读取成功！', res)
+          let msg = res.data.result
+          console.log('msg控制电源开机成功！', msg)
+          let msgJson = JSON.parse(msg)
+          let setpoweron = ''
+          setpoweron = msgJson.onoff.toString()
+          console.log('msg控制电源开机成功！', setpoweron)
+          _this.runMsg = '控制电源开机: ' + setpoweron
+        } else {
+          console.log('控制电源开机失败？？？', res)
+          let msg = res.data.result
+          _this.runMsg = '开机: ' + msg
+        }
+      })
+    },
+    // 控制电源关机
+    setPowerOff () {
+      let catalogid = this.currentCatalogID
+      let _this = this
+      console.log('这次控制电源关的catalogid：=', catalogid)
+      this.instance({
+        url: '/device/local/getpoweroff/' + catalogid,
+        method: 'get'
+      }).then(res => {
+        if (res.data.code === 1) {
+          console.log('res控制电源关成功！', res)
+          let msg = res.data.result
+          console.log('msg控制电源关成功！', msg)
+          let msgJson = JSON.parse(msg)
+          let setpoweroff = ''
+          setpoweroff = msgJson.onoff.toString()
+          console.log('msg控制电源关成功！', setpoweroff)
+          _this.runMsg = '控制电源关机: ' + setpoweroff
+        } else {
+          console.log('控制电源关机失败？？？', res)
+          let msg = res.data.result
+          _this.runMsg = '关机: ' + msg
+        }
+      })
+    },
+    // 设置电源参数
+    setPowerParam () {
+      let catalogid = this.currentCatalogID
+      let _this = this
+      console.log('这次设置电源参数的catalogid：=', catalogid)
+      let temp = {}
+      temp.catalogid = catalogid
+      temp.setparamv = 6000
+      temp.setparamampercetage = 0x64
+      temp.shareamflag = 0x55
+      temp.autopoweronflag = 0x55
+      temp.submoduleratedkw = 2
+      this.instance({
+        url: '/device/local/setpowerparam',
+        method: 'post',
+        data: temp
+      }).then(res => {
+        if (res.data.code === 1) {
+          console.log('res设置电源参数！', res)
+          let msg = res.data.result
+          console.log('msg设置电源参数！', msg)
+          let msgJson = JSON.parse(msg)
+          let catalogid = ''
+          catalogid = msgJson.onoff.toString()
+          console.log('msg设置电源参数关成功！', catalogid)
+          _this.runMsg = '设置电源参数: ' + catalogid
+        } else {
+          console.log('设置电源参数失败？？？', res)
+          let msg = res.data.result
+          _this.runMsg = '设置电源参数: ' + msg
         }
       })
     },
@@ -380,10 +547,12 @@ export default {
 </script>
 
 <style lang="scss" type="text/scss" scoped>
-h3 {
+h4 {
   font-weight: normal;
   background:darkorchid;
-  }
+  height: 50px;
+  width: 100%;
+}
 .toolbar {
   position: absolute;
   right: 10px;
