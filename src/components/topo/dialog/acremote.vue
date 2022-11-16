@@ -15,17 +15,23 @@
       size="medium"
       :rules="rules"
     >
-      <el-form-item label="请求URL" prop="url">
+      <el-form-item label="站点显示名称" prop="title">
         <el-input
-          v-model="form.url"
+          v-model="form.title"
           auto-complete="off"
           placeholder="必填"
         ></el-input>
       </el-form-item>
-      <p><em>TODO: 演示项目，其他字段未添加</em></p>
+      <el-form-item label="站点ID" prop="id">
+        <el-input
+          v-model="form.id"
+          auto-complete="off"
+          placeholder="必填"
+        ></el-input>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
+       <el-button type="info" @click="dialogVisible = false">取 消</el-button>
       <el-button type="primary" @click="onConfirm">确 定</el-button>
     </div>
   </el-dialog>
@@ -43,7 +49,8 @@ export default {
       name: name,
       dialogVisible: true,
       rules: {
-        url: [{ required: true, message: '请输入请求URL', trigger: 'blur' }]
+        title: [{ required: true, message: '请输入推送标题', trigger: 'blur' }],
+        template: [{ required: true, message: '请输入推送内容', trigger: 'blur' }]
       }
     }
   },
@@ -60,7 +67,7 @@ export default {
       this.dialogVisible = false
       this.$emit('on-close', this.item)
       this.item.updateItem({
-        text: this.form.url
+        text: this.form.title
       })
     }
   }

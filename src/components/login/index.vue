@@ -56,7 +56,10 @@ export default {
         account: '',
         password: ''
       },
-      rememberPassword: false
+      rememberPassword: false,
+      instance: this.$ajax.create({
+        baseURL: 'http://power.ieyeplus.com:7001/'
+      })
     }
   },
   created () {
@@ -82,13 +85,26 @@ export default {
         this.showTip('密码不能为空')
         return
       }
-      this.set_user_info({
-        user: null,
-        freeswitchData: null,
-        login: true
+      this.instance({
+        'url': '/user/login',
+        data: this.formData,
+        'method': 'post'
+      }).then((res) => {
+        if (res.data.code === 1) {
+          let userData = res.data.result
+          // console.log('用户登陆', userData[0])
+          this.set_user_info({
+            user: userData[0],
+            userOrg: res.data.result.userorg,
+            powerData: null,
+            login: true
+          })
+          this.showTip('登录成功')
+          setTimeout(this.$router.push({path: '/'}), 2000)
+        } else {
+          this.showTip('账号或密码错误')
+        }
       })
-      this.showTip('登录成功')
-      setTimeout(this.$router.push({path: '/'}), 2000)
     },
     showTip (tipContent) {
       this.$message.success(tipContent)

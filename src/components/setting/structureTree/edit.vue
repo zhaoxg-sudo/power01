@@ -48,7 +48,7 @@
             <div class="form-group">
               <label class="col-sm-6 control-label">端口</label>
               <div class="col-sm-6">
-                <input type="text" class="form-control" v-model="upData.port">
+                <input type="text" class="form-control" v-model="upData.ipport">
               </div>
             </div>
           </div>
@@ -86,22 +86,10 @@ import $ from 'jquery'
 import { mapActions } from 'vuex'
 export default {
   props: {
-    modolType: {type: Number},
-    transferdata: {type: Object},
     changedNode: {type: Object}
   },
   data () {
     return {
-      formData: {
-        devicecode: '',
-        devicename: '',
-        password: '',
-        type: 0,
-        devicevedios: [{ vediourl: '' }, { vediourl: '' }, { vediourl: '' }, { vediourl: '' }],
-        feature: {organizationid: this.transferdata.targetMenuId, aliasname: ''},
-        ipaddress: '',
-        port: ''
-      },
       upData: {
         catalogid: '',
         parentid: '',

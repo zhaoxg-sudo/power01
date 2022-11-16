@@ -15,65 +15,26 @@
       size="medium"
       :rules="rules"
     >
-      <el-form-item label="触发方式" prop="event">
-        <el-select v-model="form.event" placeholder="请选择触发方式">
-          <el-option label="无" value="none"></el-option>
+      <el-form-item label="站点类型" prop="event">
+        <el-select v-model="form.event" placeholder="请选择站点类型">
+          <el-option value="root" label="根站点"></el-option>
+          <el-option value="middle" label="中间站点"></el-option>
+          <el-option value="other" label="其它站点"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="数据源URL" prop="inputUrl">
+      <el-form-item label="站点显示名称" prop="title">
         <el-input
-          v-model="form.inputUrl"
+          v-model="form.title"
           auto-complete="off"
-          placeholder="输入获取数据的URL"
+          placeholder="必填"
         ></el-input>
       </el-form-item>
-      <el-form-item label="请求方法" prop="method">
-        <el-select v-model="form.method" placeholder="请选择请求方法">
-          <el-option label="GET" value="GET"></el-option>
-          <el-option label="POST" value="POST"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="请求头部" prop="headers">
+      <el-form-item label="站点ID" prop="id">
         <el-input
-          type="textarea"
-          rows="2"
-          v-model="form.headers"
+          v-model="form.id"
           auto-complete="off"
-          placeholder="选填"
+          placeholder="必填"
         ></el-input>
-      </el-form-item>
-      <el-form-item label="请求参数" prop="data">
-        <el-input
-          type="textarea"
-          rows="4"
-          v-model="form.data"
-          auto-complete="off"
-          placeholder="JSON格式"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="Schema" prop="schema">
-        <el-input
-          type="textarea"
-          rows="4"
-          v-model="form.schema"
-          auto-complete="off"
-          placeholder="JSON格式"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="数据标识名" prop="alias">
-        <el-input
-          v-model="form.alias"
-          auto-complete="off"
-          placeholder="给数据指定一个前缀标识"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="更新间隔" prop="refresh">
-        <el-input-number
-          v-model="form.refresh"
-          controls-position="right"
-          :min="0"
-          :max="99999"
-        ></el-input-number>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -125,6 +86,9 @@ export default {
     onClose () {
       this.dialogVisible = false
       this.$emit('on-close', this.item)
+      this.item.updateItem({
+        text: this.form.title
+      })
     }
   }
 }

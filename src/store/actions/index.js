@@ -15,6 +15,14 @@ export default {
   TreeChange ({commit}, val) {
     commit('TREECHANGE', val)
   },
+  // 报警
+  alarmReport ({commit}, val) {
+    commit('ALARMREPORT', val)
+  },
+  // 刷新电源设置参数
+  updateTime ({commit}, val) {
+    commit('updateTime', val)
+  },
   treeListOpenedState ({commit}, status) {
     commit('TREE_LIST_OPENED_STATE', status)
   }

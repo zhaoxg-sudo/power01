@@ -22,6 +22,7 @@ import './assets/css/loaderskit.css'
 // 引入系统设置样式
 import './assets/css/setting.css'
 // 引入公用 js
+import './assets/js/common.js'
 // import 'utils/public'
 // 1.滚动条
 // import './assets/js/jquery.slimscroll.min'

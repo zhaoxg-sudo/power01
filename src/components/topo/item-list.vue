@@ -3,16 +3,22 @@
     <div class="item-category">
       <div class="item-header">起始点</div>
       <div class="item-content">
-        <el-popover ref="DEVICE" placement="right" title="站点组织" width="200" trigger="hover" content="这是站点组织"></el-popover>
-        <div v-popover:DEVICE class="item item-input" data-type="INPUT" data-name="DEVICE">
-          <div class="item-icon"><img :src="icon.DEVICE" /></div>
+        <el-popover ref="STATION" placement="right" title="站点组织" width="200" trigger="hover" content="这是起始点：站点组织"></el-popover>
+        <div v-popover:STATION class="item item-input" data-type="INPUT" data-name="STATION">
+          <div class="item-icon"><img :src="icon.STATION" /></div>
           <div class="item-label">站点组织</div>
           <div class="item-port item-port-output"></div>
         </div>
-        <el-popover ref="CUSTOM_DATA" placement="right" title="局端电源" width="200" trigger="hover" content="这是一台局端电源设备"></el-popover>
-        <div v-popover:CUSTOM_DATA class="item item-input" data-type="INPUT" data-name="CUSTOM_DATA">
-          <div class="item-icon"><img :src="icon.CUSTOM_DATA" /></div>
-          <div class="item-label">局端电源</div>
+        <el-popover ref="DCCENTER" placement="right" title="直流电源" width="200" trigger="hover" content="这是起始点：直流局端电源"></el-popover>
+        <div v-popover:DCCENTER class="item item-function" data-type="INPUT" data-name="DCCENTER">
+          <div class="item-icon"><img :src="icon.DCCENTER" /></div>
+          <div class="item-label">直流局端电源</div>
+         <div class="item-port item-port-output"></div>
+        </div>
+        <el-popover ref="ACCENTER" placement="right" title="交流电源" width="200" trigger="hover" content="这是起始点：交流局端电源"></el-popover>
+        <div v-popover:ACCENTER class="item item-function" data-type="INPUT" data-name="ACCENTER">
+          <div class="item-icon"><img :src="icon.ACCENTER" /></div>
+          <div class="item-label">交流局端电源</div>
           <div class="item-port item-port-output"></div>
         </div>
       </div>
@@ -21,17 +27,24 @@
     <div class="item-category">
       <div class="item-header">中间点</div>
       <div class="item-content">
-        <el-popover ref="LOGIC_RULE" placement="right" title="直流电源" width="200" trigger="hover" content="这是直流电源"></el-popover>
-        <div v-popover:LOGIC_RULE class="item item-function" data-type="FUNCTION" data-name="LOGIC_RULE">
-          <div class="item-icon"><img :src="icon.LOGIC_RULE" /></div>
-          <div class="item-label">直流电源</div>
+         <el-popover ref="STATION1" placement="right" title="站点组织" width="200" trigger="hover" content="这是中间点：站点组织"></el-popover>
+        <div v-popover:STATION1 class="item item-function" data-type="FUNCTION" data-name="STATION">
+          <div class="item-icon"><img :src="icon.STATION" /></div>
+          <div class="item-label">站点组织</div>
           <div class="item-port item-port-input"></div>
           <div class="item-port item-port-output"></div>
         </div>
-        <el-popover ref="ARITHMETIC" placement="right" title="交流电源" width="200" trigger="hover" content="这是交流电源"></el-popover>
-        <div v-popover:ARITHMETIC class="item item-function" data-type="FUNCTION" data-name="ARITHMETIC">
-          <div class="item-icon"><img :src="icon.ARITHMETIC" /></div>
-          <div class="item-label">交流电源</div>
+        <el-popover ref="DCCENTER1" placement="right" title="直流局端电源" width="200" trigger="hover" content="这是中间点：直流局端电源"></el-popover>
+        <div v-popover:DCCENTER1 class="item item-function" data-type="FUNCTION" data-name="DCCENTER">
+          <div class="item-icon"><img :src="icon.DCCENTER" /></div>
+          <div class="item-label">直流局端电源</div>
+          <div class="item-port item-port-input"></div>
+          <div class="item-port item-port-output"></div>
+        </div>
+        <el-popover ref="ACCENTER1" placement="right" title="交流局端电源" width="200" trigger="hover" content="这是中间点：交流局端电源"></el-popover>
+        <div v-popover:ACCENTER1 class="item item-function" data-type="FUNCTION" data-name="ACCENTER">
+          <div class="item-icon"><img :src="icon.ACCENTER" /></div>
+          <div class="item-label">交流局端电源</div>
           <div class="item-port item-port-input"></div>
           <div class="item-port item-port-output"></div>
         </div>
@@ -41,22 +54,16 @@
     <div class="item-category">
       <div class="item-header">终点</div>
       <div class="item-content">
-        <el-popover ref="APP" placement="right" title="远端交流模块" width="200" trigger="hover" content="这是远端交流模块"></el-popover>
-        <div v-popover:APP class="item item-action" data-type="ACTION" data-name="APP">
-          <div class="item-icon"><img :src="icon.APP" /></div>
-          <div class="item-label">远端交流模块</div>
+        <el-popover ref="DCREMOTE" placement="right" title="远端直流电源" width="200" trigger="hover" content="这是终点：直流远端电源"></el-popover>
+        <div v-popover:DCREMOTE class="item item-action" data-type="ACTION" data-name="DCREMOTE">
+          <div class="item-icon"><img :src="icon.DCREMOTE" /></div>
+          <div class="item-label">直流远端电源</div>
           <div class="item-port item-port-input"></div>
         </div>
-        <el-popover ref="HTTP" placement="right" title="远端直流模块" width="200" trigger="hover" content="这是远端直流模块"></el-popover>
-        <div v-popover:HTTP class="item item-action" data-type="ACTION" data-name="HTTP">
-          <div class="item-icon"><img :src="icon.HTTP" /></div>
-          <div class="item-label">远端直流模块</div>
-          <div class="item-port item-port-input"></div>
-        </div>
-        <el-popover ref="EMAIL" placement="right" title="远端电源" width="200" trigger="hover" content="这是一台远端电源设备"></el-popover>
-        <div v-popover:EMAIL class="item item-action" data-type="ACTION" data-name="EMAIL">
-          <div class="item-icon"><img :src="icon.EMAIL" /></div>
-          <div class="item-label">远端电源</div>
+        <el-popover ref="ACREMOTE" placement="right" title="远端交流电源" width="200" trigger="hover" content="这是终点：交流远端电源"></el-popover>
+        <div v-popover:ACREMOTE class="item item-action" data-type="ACTION" data-name="ACREMOTE">
+          <div class="item-icon"><img :src="icon.ACREMOTE" /></div>
+          <div class="item-label">交流远端电源</div>
           <div class="item-port item-port-input"></div>
         </div>
       </div>

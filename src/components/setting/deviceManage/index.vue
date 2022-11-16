@@ -4,7 +4,7 @@
       <div class="operate">
         <form class="form-inline">
           <div class="form-group">
-            <input type="text" placeholder="请输入要查询的告警编号" class="form-control select-width" style="width:200px;" v-model="fuzzyquery" />
+            <input type="text" placeholder="请输入要查询的设备id" class="form-control select-width" style="width:200px;" v-model="fuzzyquery" />
           </div>
           <button type="button" class="btn btn-info" @click="openModal(-1)">
             <i class="fa fa-bolt" aria-hidden="true"></i>修改告警联动
@@ -20,23 +20,22 @@
       <table class="table">
         <thead>
           <tr>
-            <td>告警类型</td>
-            <td>告警信息</td>
-            <td>告警时间</td>
-            <td>告警联动</td>
-            <td>告警确认</td>
+            <td>设备id</td>
+            <td>设备名称</td>
+            <td>设备类型</td>
+            <td>设备ip</td>
+            <td>设备port</td>
           </tr>
         </thead>
         <tbody>
-          <tr  v-for="item in dataAll" :key="item.deviceid">
-            <td>{{item.devicecode}}</td>
-            <td>{{item.devicename}}</td>
+          <tr  v-for="item in dataAll" :key="item.catalogid">
+            <td>{{item.catalogid}}</td>
+            <td>{{item.label}}</td>
+            <td>{{returnType(item.protocoltype)}}</td>
+            <td>{{item.ipaddress}}</td>
             <td>
-              {{ returnType(item.type)}}
-            </td>
-            <td> {{item.organizationid}} </td>
-            <td>
-              <button type="submit" class="btn btn-sm btn-default" @click="deleteItem(item.deviceid)">删除</button>
+              {{item.ipport}}
+              <!-- <button type="submit" class="btn btn-sm btn-default" @click="deleteItem(item.deviceid)">删除</button> -->
             </td>
           </tr>
         </tbody>
@@ -64,7 +63,10 @@ export default {
       self: this,
       transferData: {
         deviceid: ''
-      }
+      },
+      instance: this.$ajax.create({
+        baseURL: 'http://power.ieyeplus.com:7001/'
+      })
     }
   },
   computed: {
@@ -75,8 +77,8 @@ export default {
   },
   created () {
     this.$nextTick(() => {
-    // this.refresh()
-    // getHeights()
+      this.refresh()
+      // getHeights()
     })
   },
   watch: {
@@ -93,37 +95,36 @@ export default {
     returnType (type) {
       switch (type) {
         case 0:
-          return '语音终端'
-        case 1:
-          return '视频终端'
-        case 2:
-          return '组播终端'
+          return '站点'
+        case '1':
+          return '直流局端'
+        case '2':
+          return '交流局端'
+        default: return '站点'
       }
     },
     refresh () {
-      let organizationIdRequests = []
-      organizationIdRequests.push(this.$ajax.get(`Feature/getFeatureByOrg/${this.$store.state.user_info.user.organizationid}?flag=false`))
-      organizationIdRequests.push(this.$ajax.get(`Feature/getFeatureByOrg/${this.$store.state.user_info.user.organizationid}?flag=true`))
-      this.$ajax.all(organizationIdRequests)
-        .then((res) => {
-          let allDevices = []
-          if (res[0].data.code === 1 && res[0].data.result !== null) {
-            res[0].data.result.forEach((re) => {
-              if (re.devicecode === this.fuzzyquery || re.devicename === this.fuzzyquery || re.orgname === this.fuzzyquery || this.fuzzyquery === '') {
-                allDevices.push(re)
+      this.instance({
+        'url': 'localall',
+        'method': 'get'
+      }).then((res) => {
+        console.log('\npower local device db:')
+        console.log(res.data)
+        if (res.data) {
+          res.data.forEach((num) => {
+            let exist = false
+            for (let i = 0; i < this.dataAll.length; i++) {
+              if (this.dataAll[i].catalogid === num.catalogid) {
+                this.dataAll[i] = num
+                exist = true
               }
-            })
-          }
-          if (res[1].data.code === 1 && res[1].data.result !== null) {
-            res[1].data.result.forEach((re) => {
-              if (re.devicecode === this.fuzzyquery || re.devicename === this.fuzzyquery || re.orgname === this.fuzzyquery || this.fuzzyquery === '') {
-                allDevices.push(re)
-              }
-            })
-          }
-          allDevices.sort((x, y) => { return x.devicecode - y.devicecode })
-          this.dataAll = allDevices
-        })
+            }
+            if (!exist) this.dataAll.push(num)
+          })
+          console.log('\npower local device table')
+          console.log(this.dataAll)
+        }
+      })
     },
     openModal (id) {
       if (id === 0) {

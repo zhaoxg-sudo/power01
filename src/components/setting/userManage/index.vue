@@ -1,46 +1,86 @@
 <template>
   <div class="content">
     <div v-if="modolType!=null && modolType >=0 ">
-      aaa
-      </div>
-      <div v-if="modolType!=null && modolType < 0">
-       aaa
-      </div>
-      <div class="groupList">
+      <modal :targetUserGroupId="targetUserGroupId" :targetMenu="targetMenu" :modolType='modolType' @close="closeModal" @refresh="refreshUser"></modal>
+    </div>
+    <div class="groupList">
       <div class="menuType">
         <i class="fa fa-list-ul" aria-hidden="true"></i>远程供电站点
         <span><button type="button" class="btn btn-sm btn-info" @click="changeStatus">修改</button></span>
       </div>
       <tree :stationStatus="stationStatus"></tree>
     </div>
+    <params :targetMenu="targetMenu" v-if="time_show" @close = "closeTimeMessage"></params>
     <div class="singleDevice">
       <div class="table">
-        <h3> 站点详情 </h3>
+        <!-- <h5> 工作参数 </h5> -->
+        <table class="table">
+         <caption>
+        </caption>
+          <thead>
+            <tr>
+              <!-- <td>默认电源站点
+                <button type="button" class="btn btn-sm btn-info default-center"  @click = "enable_default_center==true?editDefaultCenter():setDefaultCenterState(true)" > {{enable_default_center==true?"修改默认电源站点":"启用默认模式"}}</button>
+                <button type="button" v-if = "enable_default_center"  class="btn btn-sm btn-info default-center"  @click = "setDefaultCenterState(false)" > {{"关闭默认模式"}}</button>
+              </td> -->
+              <td>刷新时间
+                <button type="button" class="btn btn-sm btn-info alarm_control"  @click = "changeTimeMessage()" > 刷新时间设置</button>
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+               <!-- <td  :contenteditable = "defaultcenter_contenteditable" @blur="editDefaultCenterFinished($event)" @keydown.13 = "editDefaultCenterFinished($event)" v-focus = "editdefaultcenter"   >{{defaultCenter}}</td> -->
+              <td>{{refreshtime}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="table">
-        <h3> 用户 </h3>
-        <h3 v-if = "allDevices.length>0">局端设备</h3>
-        <h3 v-if = "deviceGroups.length>0">设备组</h3>
+        <!-- <h5> 用户 </h5> -->
+        <span style="float:right"><button type="submit" class="btn btn-sm btn-info" @click="openModal(1 ,0)">新增用户</button></span>
+        <table class="table">
+          <caption>
+          </caption>
+          <thead>
+            <tr>
+              <td>用户名</td>
+              <td>用户类型</td>
+              <td>所属站点ID</td>
+              <td>创建时间</td>
+              <td>操作</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="data in dataAll"  :key = "data.userid" >
+              <td>{{ data.username }}</td>
+              <td>{{ showusertype(data.usertype) }}</td>
+              <td>{{ data.userorg }}</td>
+              <td>{{ data.createdat }}</td>
+              <td width="170">
+                <!-- <button type="button" class="btn btn-sm btn-info" @click="openModal( 1 ,data.userid)">修改</button> -->
+                <button type="button" class="btn btn-sm btn-default" @click="deleteUser(data.username)">删除</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-        <!--<paging></paging>-->
+       <div class="middleCon">
+         <topo ></topo>
+       </div>
   </div>
 </template>
 <script>
-// import deviceList from './deviceList.vue'
-// import alarm from './alarm.vue'
 import $ from 'jquery'
 import { mapGetters } from 'vuex'
 import tree from '../structureTree/index.vue'
+import topo from '../../topo/topo-edit.vue'
 // import paging from '../paging/index.vue'
-// import modal from './modal.vue'
-// import edit from './edit.vue'
+import modal from './modal.vue'
+import params from './default.vue'
 // import {getHeights} from 'utils/page/setting'
 // import { GET_USER_INFO } from 'store/getters/type'
-const labels = {
-  defaultId: 'organizationid',
-  treeName: 'orgname'
-}
 export default {
   directives: {
     focus: {
@@ -60,27 +100,30 @@ export default {
   },
   data () {
     return {
+      alarm: '',
+      refreshtime: 5,
+      defaultshow: 1,
+      defaultshowenabled: true,
+      time_show: false,
       stationStatus: 'show',
       showDeviceList: false,
-      labels,
       selectUser: [],
       dataAll: [],
       deviceGroups: [],
       targetMenu: {},
       self: this,
       modolType: null,
+      topoType: 0,
       targetUserGroup: null,
       allDevices: [],
       targetUserGroupId: '',
       transferdata: {deviceId: '', targetMenuId: ''},
-      deviceGroupsDelete: [],
-      verto: '',
-      meeting: '',
-      voice: '',
-      broad: '',
-      alarm: '',
+      enable_default_center: '',
+      defaultCenter: '默认',
+      defaultcenter_contenteditable: false,
+      editdefaultcenter: false,
       instance: this.$ajax.create({
-        baseURL: 'https://scc.ieyeplus.com:8001/'
+        baseURL: 'http://power.ieyeplus.com:7001/'
       })
     }
   },
@@ -88,14 +131,20 @@ export default {
     'TreeData': {
       handler: function (data) {
         this.targetMenu = data
-        this.transferdata.targetMenuId = data.organizationid
+        this.transferdata.targetMenuId = data.catalogid
         this.targetUserGroup = data.orgname
         this.modolType = null
-        /* this.deviceGroups.forEach(
-          (item,index)=>{
-            this.deviceGroups.splice(index,1)
-          }
-        ) */
+        console.log('edit刷新用户数据.......')
+        this.instance({
+          'url': '/user/' + this.targetMenu.catalogid,
+          'method': 'get'
+        }).then((res) => {
+          console.log('\nget user by catalogid:', this.targetMenu.catalogid)
+          console.log(res.data)
+          if (res.data.code === 1) {
+            this.dataAll = res.data.result
+          } else this.dataAll = {}
+        })
         this.$nextTick(function () {
           // this.refresh()
         })
@@ -114,40 +163,125 @@ export default {
     }
   },
   components: {
-    tree
-    // modal,
-    // paging,
-    // deviceList,
-    // edit
-    // alarm,
+    tree,
+    modal,
+    topo,
+    params
   },
   created () {
+    this.targetMenu = this.TreeData
+    // if (!this.targetMenu.hasOwnProperty('catalogid')) {
+    //   this.targetMenu = { catalogid: 'b202669251a046bbbc727ff3fb25f9f4' }
+    // }
+    this.targetUserGroup = this.$store.state.user_info.userOrg
     this.$nextTick(() => {
-      // this.refresh()
+      this.refresh()
       this.getHeights()
     })
-    this.targetMenu = this.TreeData
-    if (!this.targetMenu.hasOwnProperty('organizationid')) {
-      this.targetMenu = { organizationid: 'b202669251a046bbbc727ff3fb25f9f4' }
-    }
-    // this.targetUserGroup = this.$store.state.user_info.user.orgname
-    // this.OrgUrl = 'Organization/TreeRoot/' + this.$store.state.user_info.user.organizationid
   },
   methods: { // 组织机构树默认选中
-    closeAlarmMessage () {
-      this.alarm_show = false
+    editDefaultCenter () {
+      this.defaultcenter_contenteditable = true
+      this.editdefaultcenter = true
     },
-    changeAlarmMessage () {
-      this.alarm_show = true
-    },
-    initDatas (data) {
-      if (!this.targetMenu.hasOwnProperty('organizationid') && data) {
-        this.targetMenu = data
-        this.refresh()
+    editDefaultCenterFinished (event) {
+      this.defaultcenter_contenteditable = false
+      event.target.textContent = event.target.textContent.trim()
+      let text = event.target.textContent
+      if (isNaN(Number(text))) {
+        this.$message.success('输入格式错误，请重新输入')
+      } else {
+        this.editdefaultcenter = false
+        this.defaultCenter = text
+        this.$message.success('默认电源站点修改正确')
+        console.log('默认电源站点修改为:', text)
+        this.defaultshow = text
+        // 更新default数据库
+        let defaultP = {}
+        defaultP.catalogid = 1
+        defaultP.defaultshowenabled = true
+        defaultP.defaultshow = this.defaultshow
+        defaultP.refreshtime = this.refreshtime
+        this.updateDefaultDB(defaultP)
       }
+    },
+    updateDefaultDB (d) {
+      let defaultP = {}
+      defaultP.catalogid = d.catalogid
+      defaultP.defaultshowenabled = d.defaultshowenabled
+      defaultP.defaultshow = d.defaultshow
+      defaultP.refreshtime = d.refreshtime
+      this.instance({
+        url: '/default/update',
+        method: 'post',
+        data: defaultP
+      })
+        .then((res) => {
+          if (res.data.code === 1) {
+            this.$message.success('更新成功')
+          } else {
+            this.$message.success('更新失败，请检查数据库')
+          }
+        })
+    },
+    setDefaultCenterState (state) {
+      this.enable_default_center = state
+      let defaultP = {}
+      defaultP.catalogid = 1
+      defaultP.defaultshowenabled = this.enable_default_center
+      defaultP.defaultshow = this.defaultshow
+      defaultP.refreshtime = this.refreshtime
+      this.updateDefaultDB(defaultP)
+    },
+    showusertype (type) {
+      let typeReturn = '未知'
+      switch (type) {
+        case '0' :
+          typeReturn = '管理员'
+          break
+        case '1' :
+          typeReturn = '操作员'
+          break
+      }
+      return typeReturn
+    },
+    closeTimeMessage () {
+      this.time_show = false
+      this.refresh()
+    },
+    changeTimeMessage () {
+      this.time_show = true
     },
     // 渲染表格数据
     refresh () {
+      console.log('refresh刷新用户数据.......')
+      this.instance({
+        'url': '/user/' + this.targetMenu.catalogid,
+        'method': 'get'
+      }).then((res) => {
+        console.log('\nget user by orgid:', this.targetMenu.catalogid)
+        console.log(res.data)
+        if (res.data.code === 1) {
+          this.dataAll = res.data.result
+        } else this.dataAll = {}
+      })
+      // 刷新工作参数
+      console.log('refresh刷新default工作参数.......')
+      this.instance({
+        url: '/default/get/' + '1',
+        method: 'get'
+      })
+        .then((res) => {
+          if (res.data.length > 0) {
+            console.log('default/get=:', res.data)
+            this.defaultshowenabled = res.data[0].defaultshowenabled
+            this.defaultshow = res.data[0].defaultshow
+            this.refreshtime = res.data[0].refreshtime
+          //   this.defaultCenter = this.defaultshow
+          //   this.enable_default_center = this.defaultshowenabled
+          //   console.log('this.enable_default_center', this.enable_default_center)
+          }
+        })
     },
     openModal (status, id) {
       // 编辑或新增
@@ -168,28 +302,30 @@ export default {
         }
       }
     },
+    refreshUser () {
+      console.log('更新用户操作后........')
+      setTimeout(() => {
+        this.refresh()
+      }, 1000)
+    },
     closeModal () {
+      console.log('取消了用户操作界面........')
       this.modolType = null
     },
-    deleteDevice (deviceId, deviceCode) {
-      let request = {}
-      request.deviceId = deviceId
-      request.deviceCode = deviceCode
-      this.$ajax.post('Device/deletes', [request])
-        .then(res => {
-          if (res.data.code === 1) {
-            this.deviceGroups = []
-            this.refresh()
-          }
-        })
-    },
-    deleteUser (userId) {
-      this.$ajax.delete(`User/Remove/${userId}`)
-        .then(res => {
-          if (res.data.code === 1) {
-            this.refresh()
-          }
-        })
+    deleteUser (username) {
+      let userName = {}
+      userName.username = username
+      this.instance({
+        'url': '/user/userdel',
+        data: userName,
+        'method': 'post'
+      }).then((res) => {
+        // console.log(res.data)
+        if (res.data.code === 1) {
+          console.log('\ndel user by username is ok:', username)
+          this.refresh()
+        }
+      })
     },
     open () {
       this.showDeviceList = true
@@ -213,6 +349,7 @@ export default {
       //  高度判断
       var windowHeight = $(window).height()
       $('.content').height(windowHeight - 120)
+      $('.middleCon').css('marginLeft', '251px')
       // var maxHeight = windowHeight - $('.sysName').outerHeight()
       // var contentHeight = $('.content').outerHeight()
     }
@@ -221,7 +358,7 @@ export default {
 
 </script>
 <style  scoped>
-.watcher{
+.default-center{
   margin-left: 5px;
 }
 </style>

@@ -17,6 +17,12 @@ export default {
     state.TreeData = val.data
     state.TreeObj = val.node
   },
+  ALARMREPORT (state, val) {
+    state.alarmReport = val
+  },
+  updateTime (state, val) {
+    state.updateTime = val
+  },
   TREE_LIST_OPENED_STATE (state, val) {
     state.treeListOpenedState = val
   }

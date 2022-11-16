@@ -24,6 +24,8 @@ export default {
     }
   },
   created () {
+    console.log('power router:==============')
+    console.log(routes.options.routes[2].children)
     this.menuList = routes.options.routes[2].children
   }
 }

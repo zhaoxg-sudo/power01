@@ -27,6 +27,9 @@ export default {
       var contentWidth = $(window).width()
       $('.content').css('left', 0)
       $('.content').width(contentWidth - 10)
+      // $('.musicMenuHalf').css('width', '99.72%')
+      // $('.show-area').css('width', '100%')
+      // console.log('点击了:返回树箭头，树缩回,show-area width=100%')
     },
     removeAll () {
       $('#end').html('')

@@ -6,6 +6,7 @@
 
 <script>
 import $ from 'jquery'
+import { mapGetters } from 'vuex'
 export default {
   name: 'alarm',
   data () {
@@ -14,13 +15,24 @@ export default {
     }
   },
   created () {
-    let _this = this
     this.$nextTick(async () => {
       this.getHeightsWidths()
-      this.sockets.subscribe('alarm', (data) => {
-        _this.msg = data
-      })
     })
+  },
+  computed: {
+    ...mapGetters({
+      alarmReport: 'alarmReport'
+    })
+  },
+  watch: {
+    'alarmReport': {
+      handler: async function (data) {
+        console.log('alarm report:=', data)
+        this.msg = data
+        this.$nextTick(function () {
+        })
+      }
+    }
   },
   methods: {
     getHeightsWidths () {

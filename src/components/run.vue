@@ -1,32 +1,63 @@
 <template>
-  <div>
-      <!-- <h4>{{msg}}</h4> -->
-      <div class="middleCon">
-        <topo ></topo>
-      </div>
+  <div class="content">
+    <div>
+      <show :currentTreeData='currentTreeData'></show>
+    </div>
+    <div class="middleCon">
+      <topo :topoType='topoType'></topo>
+    </div>
   </div>
 </template>
 
 <script>
 import $ from 'jquery'
 import topo from './topo/topo.vue'
-// import { mapGetters } from 'vuex'
+import show from './show/show.vue'
+import { getHeight } from '@/utils/height.js'
+import { mapGetters } from 'vuex'
 export default {
   name: 'run',
   data () {
     return {
-      msg: '供电系统运行正常'
+      topoType: 1,
+      msg: '供电运行参数显示',
+      currentTreeData: ''
     }
   },
   components: {
-    topo: topo
+    topo: topo,
+    show: show
   },
   created () {
+    let _this = this
+    console.log('进入了run vue.......')
+    console.log('TreeData', this.TreeData)
+    this.currentTreeData = this.TreeData
     this.$nextTick(async () => {
+      $('.orgTreeList').addClass('treeListShow').removeClass('treeListHide')
+      getHeight()
       this.getHeightsWidths()
       this.sockets.subscribe('alarm', (data) => {
+        _this.msg = data
       })
     })
+  },
+  computed: {
+    ...mapGetters({
+      TreeData: 'TreeData'
+    })
+  },
+  watch: {
+    'TreeData': {
+      handler: async function (data) {
+        console.log('run has watched  tree data id ,labal:=', data.catalogid, data.label)
+        this.currentTreeData = data
+        this.$nextTick(async function () {
+          this.getHeightsWidths()
+        })
+      },
+      deep: true
+    }
   },
   methods: {
     getHeightsWidths () {
@@ -41,10 +72,16 @@ export default {
         var treeWidth = $('.orgTreeList').width()
         $('.content').css('left', treeWidth)
         $('.content').width(contentWidth - treeWidth - 10)
+        // $('.musicMenuHalf').css('width', '85%')
+        // $('.show-area').css('width', '85%')
+        // console.log('show-area width85%')
       } else {
         var contentWidths = $(window).width()
         $('.content').css('left', 0)
         $('.content').width(contentWidths - 10)
+        // $('.musicMenuHalf').css('width', '99.72%')
+        // $('.show-area').css('width', '100%')
+        // console.log('show-area width=100%')
       }
     }
   }
@@ -53,23 +90,20 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-div {
-  border: 5px solid#4e545a;
-  padding: 0;
-  margin: 0;
+::-webkit-scrollbar{
+  width: 5px;
+  background: #4E545A
+
 }
-h1, h2 {
-  font-weight: normal;
-  }
-ul {
-  list-style-type: none;
-  padding: 0;
+.content{overflow-y:auto;}
+::-webkit-scrollbar-button{  }
+::-webkit-scrollbar-track{ }
+::-webkit-scrollbar-track-piece {}
+::-webkit-scrollbar-thumb{
+  background:#6F7882;
+  border-radius: 5px;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+
+::-webkit-scrollbar-corner {  }
+::-webkit-resizer{}
 </style>

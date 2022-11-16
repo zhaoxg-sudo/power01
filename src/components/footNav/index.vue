@@ -3,9 +3,9 @@
     <div class="userInfo">
       <div class="userName">
         <span>Hi {{username}}<a @click="logout()"> [退出]</a>
-          <a @click="setting()"><i class="fa fa-cogs"></i>配置管理</a>
+          <a v-if="showSetting" @click="setting()"><i class="fa fa-cogs"></i>配置管理</a>
           <a @click="$router.go(0)"><i class="fa fa-refresh"></i>刷新页面</a>
-          &nbsp;  &nbsp;&nbsp; copyright©北京三合云海科技有限责任公司  &nbsp;&nbsp; v0.7.05 2021.0705
+          &nbsp;  &nbsp;&nbsp; copyright©北京三合云海科技有限责任公司  &nbsp;&nbsp; v0.9.01 2022.1115 publish
         </span>
       </div>
     </div>
@@ -18,14 +18,6 @@
       <div :class="this.enable_mobile == false?'':'fa fa-mobile fa-2x'"></div>
       </el-tooltip>
       <div></div>
-    </div>
-    <div class="audio-box" style="top: 5px;">
-       <audio ref="audio" ></audio>
-      <div class="audio-container">
-        <div class="audio-view">
-          <span>{{this.selectPhonex==null?'':'设备号码:'+this.selectPhonex.userID}}   {{this.selectPhonex==null?'':'设备名字:'+this.selectPhonex.name}}   {{(this.selectPhonex==null||this.selectPhonex.networkIP==null)?'':'IP地址:'+this.selectPhonex.networkIP+":"+this.selectPhonex.networkPort}}</span>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -54,10 +46,15 @@ export default {
       enable_mobile: false,
       leftwatcher: '',
       mobile: '',
-      selectPhonex: null
+      selectPhonex: null,
+      showSetting: false
     }
   },
   created () {
+    let userType = this.get_user_info.user.usertype
+    if (userType >= 1) {
+      this.showSetting = false
+    } else this.showSetting = true
   },
   computed: {
     ...mapGetters({
@@ -80,7 +77,7 @@ export default {
         this.$message.success('退出成功')
         this.set_user_info({
           user: null,
-          freeswitchData: null,
+          powerData: null,
           login: false
         })
         setTimeout(this.$router.replace({name: 'login'}), 500)

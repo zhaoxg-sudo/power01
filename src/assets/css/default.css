@@ -685,15 +685,15 @@ ul.callNum>li>span {
 
 @media(min-width:966px) {
     .middleCon {
-        margin-left: 251px;
-        margin-right: 251px;
+        /* margin-left: 251px; */
+        /* margin-right: 251px; */
     }
 }
 
 @media(min-width:1400px) {
     .middleCon {
-        margin-left: 301px;
-        margin-right: 301px;
+        /* margin-left: 301px; */
+        /* margin-right: 301px; */
     }
 }
 
@@ -727,7 +727,7 @@ ul.callNum>li>span {
         position: absolute;
         bottom: 0px;
         left: 0px;
-        //border-top: 1px solid #000;
+        /* //border-top: 1px solid #000; */
     }
     ul.menuList {
 	margin-bottom : 10px;
@@ -1135,6 +1135,11 @@ ul.screenTools>li.middleCircle {
     padding: 0px 5px;
 }
 
+.operateAc {
+    float: left;
+    padding: 0px 5px;
+}
+
 .delate {
     display: inline-block;
     margin: 0px 20px;
@@ -1299,6 +1304,61 @@ span.times {
     overflow: auto;
 }
 
+.show-area {
+    width: 100%;
+    height: 460px;
+    background: #313439;
+}
+
+.run-area {
+    height: 85px;
+    margin: 3px;
+    border-radius: 4px;
+    background: #313439;
+}
+
+.alarm-area {
+   height: 80px;
+   margin: 3px;
+   border-radius: 4px;
+   background: #313439;
+}
+
+.inputOutput {
+    height: 185px;
+    background: dimgray;
+}
+
+.inputOutputHalf {
+    width: 49.4%;
+    height: 98%;
+    margin: 3px;
+    float: left;
+    border-radius: 4px;
+    background-color: #313439;
+    position: relative;
+}
+
+.singlePowerShowHalf {
+    width: 48.7%;
+    height: 95%;
+    margin: 3px;
+    float: left;
+    border-radius: 4px;
+    background-color: #313439;
+    position: relative;
+}
+
+.singlePowerShow {
+    width: 26%;
+    height: 95%;
+    margin: 3px;
+    float: left;
+    border-radius: 4px;
+    background-color: #313439;
+    position: relative;
+}
+
 .musicMenu {
     width: 31%;
     margin: 1%;
@@ -1308,9 +1368,9 @@ span.times {
 }
 
 .musicMenuHalf {
-    width: 48%;
-    height: 660px;
-    margin: 1%;
+    width: 100%;
+    height: 100%;
+    margin: 1px;
     float: left;
     border-radius: 4px;
     background-color: #313439;
@@ -1323,7 +1383,7 @@ span.times {
 
 .menuType {
     padding: 0px 0px 0px 10px;
-    line-height: 35px;
+    line-height: 37px;
     border-bottom: 1px solid #6F7882;
 }
 
@@ -1335,6 +1395,12 @@ span.times {
     float: right;
     margin-right: 10px;
 }
+
+.menuType>button {
+    float: right;
+    margin-right: 10px;
+}
+
 .menuType>span>button {
 	    float: right;
 	    margin-top:5px;
@@ -1677,6 +1743,22 @@ ul.statusTpye>li>span {
     box-shadow: 2px 2px 5px #000;
     top: 50%;
     left: 50%;
+    margin-left: 0px;
+    margin-top: -80px;
+    padding: 30px 0px 20px 0px;
+    z-index: 2999;
+}
+
+.popUpSet {
+    position: absolute;
+    width: 700px;
+    background: linear-gradient(#282F32, #626971) top;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #000;
+    top: 40%;
+    left: 30%;
     margin-left: 0px;
     margin-top: -80px;
     padding: 30px 0px 20px 0px;

@@ -141,6 +141,7 @@ class Item {
       .attr('d', iconLine)
 
     let text = group.append('text')
+    // this.title = 'yyttyyuuuui'
     let title = this.title || name[this.name]
     this._text = text
     text.text(title)

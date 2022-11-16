@@ -17,22 +17,22 @@ let bgColor = {
 }
 
 let icon = {
-  DEVICE: require('./images/report.png'),
+  STATION: require('./images/report.png'),
   CUSTOM_DATA: require('./images/online.png'),
-  LOGIC_RULE: require('./images/condition.png'),
-  ARITHMETIC: require('./images/caculator.png'),
-  APP: require('./images/post.png'),
-  HTTP: require('./images/http.png'),
+  DCCENTER: require('./images/condition.png'),
+  ACCENTER: require('./images/caculator.png'),
+  ACREMOTE: require('./images/post.png'),
+  DCREMOTE: require('./images/http.png'),
   EMAIL: require('./images/email.png')
 }
 
 let name = {
-  DEVICE: '站点组织',
+  STATION: '站点组织',
   CUSTOM_DATA: '局端电源',
-  LOGIC_RULE: '直流电源',
-  ARITHMETIC: '交流电源',
-  APP: '远端交流模块',
-  HTTP: '远端直流模块',
+  DCCENTER: '直流局端电源',
+  ACCENTER: '交流局端电源',
+  ACREMOTE: '远端交流电源',
+  DCREMOTE: '远端直流电源',
   EMAIL: '远端电源'
 }
 

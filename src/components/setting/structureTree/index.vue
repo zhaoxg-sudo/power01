@@ -13,7 +13,7 @@
     >
     </el-tree>
     <div v-if="modolType!=null && modolType < 0">
-       <nodeedit :transferdata="transferdata" :changedNode="changedNode" :modolType="modolType" @close="closeModal" @append="append"></nodeedit>
+       <nodeedit :changedNode="changedNode"  @close="closeModal" @append="append"></nodeedit>
     </div>
   </div>
 </template>
@@ -37,18 +37,18 @@ export default {
   data () {
     return {
       data: [
-        {'catalogId': 0, 'parentId': -1, 'label': '站点设备树'},
-        {'catalogId': 58, 'parentId': 0, 'label': '棋盘梁隧道1'},
-        {'catalogId': 59, 'parentId': 58, 'label': '南向局端直流电源1'},
-        {'catalogId': 60, 'parentId': 59, 'label': '南向远端1'},
-        {'catalogId': 61, 'parentId': 59, 'label': '南向远端2'},
-        {'catalogId': 62, 'parentId': 59, 'label': '南向远端3'},
-        {'catalogId': 63, 'parentId': 59, 'label': '南向远端4'},
-        {'catalogId': 64, 'parentId': 58, 'label': '北向局端直流电源2'},
-        {'catalogId': 65, 'parentId': 64, 'label': '北向远端1'},
-        {'catalogId': 66, 'parentId': 64, 'label': '北向远端2'},
-        {'catalogId': 67, 'parentId': 0, 'label': '太子城隧道2'},
-        {'catalogId': 68, 'parentId': 67, 'label': '局端交流电源1'}
+        // {'catalogId': 0, 'parentId': -1, 'label': '站点设备树'},
+        // {'catalogId': 58, 'parentId': 0, 'label': '棋盘梁隧道1'},
+        // {'catalogId': 59, 'parentId': 58, 'label': '南向局端直流电源1'},
+        // {'catalogId': 60, 'parentId': 59, 'label': '南向远端1'},
+        // {'catalogId': 61, 'parentId': 59, 'label': '南向远端2'},
+        // {'catalogId': 62, 'parentId': 59, 'label': '南向远端3'},
+        // {'catalogId': 63, 'parentId': 59, 'label': '南向远端4'},
+        // {'catalogId': 64, 'parentId': 58, 'label': '北向局端直流电源2'},
+        // {'catalogId': 65, 'parentId': 64, 'label': '北向远端1'},
+        // {'catalogId': 66, 'parentId': 64, 'label': '北向远端2'},
+        // {'catalogId': 67, 'parentId': 0, 'label': '太子城隧道2'},
+        // {'catalogId': 68, 'parentId': 67, 'label': '局端交流电源1'}
       ],
       treeData: [],
       parentData: null,
@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      // updateState: 'updateState',
+      updateState: 'updateState'
       // get_user_info: GET_USER_INFO
     })
   },
@@ -106,7 +106,7 @@ export default {
         })
     },
     handleNodeClick (data, node, event) {
-      console.log('config node click 事件.................................')
+      console.log('topo-edit config node click 事件.................................')
       console.log(node.id, data.label)
       if (event) { // 判断点击的是否为默认选中的树节点，如果不是，取消默认选中
         if (node.id !== this.$refs.tree.$children[0].node.id) {
@@ -122,7 +122,7 @@ export default {
       console.log('send to edit  data :=', data)
       this.changedNode.node = node
       this.changedNode.data = data
-      this.modolType = -1
+      this.modolType = -2
     },
     append (e) {
       console.log('当前++data', e.data)
@@ -162,8 +162,15 @@ export default {
       let delNodeName = []
       request.push(data.catalogid)
       delNodeName.push(data.label)
-      // let nodeChildren = {}
       let delMsg = ''
+      // if 是‘站点设备树’，则不允许删除并提示
+      if (data.label === '站点设备树') {
+        this.$message({
+          type: 'info',
+          message: '站点设备树是系统节点不能被删除，已取消删除'
+        })
+        return
+      }
       // 弹窗提示
       if (data.children) {
         // 循环出所有子节点
@@ -174,9 +181,9 @@ export default {
             delNodeName.push(element.label)
           })
         }
-        delMsg = '确认要删除该节点及其子节点吗?节点名称=' + delNodeName.join('|')
+        delMsg = '确认要删除该节点及其子节点和相关topo吗?节点名称=' + delNodeName.join('|')
       } else {
-        delMsg = '确认要删除该节点吗?节点名称=' + data.label
+        delMsg = '确认要删除该节点及包含的topo吗?节点名称=' + data.label
       }
       this.$confirm(delMsg + ',点击：确定，确认删除；点击：取消，不删除', '提示', {
         confirmButtonText: '确定',
@@ -186,7 +193,7 @@ export default {
         // customClass: 'popContent',
         cancelButtonClass: 'btn btn-sm btn-warning'
       }).then(() => {
-        // del db
+        // 1,del db
         console.log(request)
         console.log(delMsg)
         if (request.length > 0) {
@@ -197,13 +204,28 @@ export default {
           })
             .then((res) => {
               if (res.data.code === 1) {
-                // 删除内存中节点数据
+                // 2,删除内存中节点数据
                 console.log(data)
                 let parent = node.parent
                 parent.data.children.pop()
                 // 删除内存 end
                 console.log('删除树节点成功', res.data.result)
                 this.$message.success('删除树节点成功')
+                // 3,del topo item
+                this.instance({
+                  url: 'topo/delitem',
+                  method: 'post',
+                  data: request
+                })
+                  .then((res) => {
+                    if (res.data.code === 1) {
+                      console.log('删除topo节点成功', res.data.result)
+                      this.$message.success('删除topo成功')
+                    } else {
+                      console.log('删除topo节点失败', res.data.result)
+                      this.$message.success('删除topo失败')
+                    }
+                  })
               } else {
                 console.log('删除树节点失败', res.data.result)
                 this.$message.success('删除树节点失败')

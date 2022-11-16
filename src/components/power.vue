@@ -15,11 +15,13 @@ import container from './container/index.vue'
 import footNav from './footNav/index.vue'
 import switchLeft from './switchLeft/index.vue'
 import treeList from './treeList/index.vue'
+import { mapGetters } from 'vuex'
+import {GET_USER_INFO} from '@/store/getters/type.js'
 export default {
   name: 'power',
   data () {
     return {
-      msg: '还没收到websockt数据',
+      alarmMsg: '还没收到websockt数据',
       devicelist: [],
       username: '',
       instance: this.$ajax.create({
@@ -34,9 +36,14 @@ export default {
     'switchLeft': switchLeft,
     'treeList': treeList
   },
+  computed: {
+    ...mapGetters({
+      get_user_info: GET_USER_INFO
+    })
+  },
   created () {
     let _this = this
-    this.username = 'power'
+    this.username = this.get_user_info.user.username
     this.$nextTick(async () => {
       this.getHeightsWidths()
       // 初始化，默认展开树
@@ -44,7 +51,10 @@ export default {
       this.$store.dispatch('treeListOpenedState', 1)
       this.sockets.subscribe('alarm', (data) => {
         // console.log(data)
-        _this.msg = data
+        _this.alarmMsg = data
+        this.$router.push('/alarm/currentAlarm/index').catch(err => { console.log('\nroot user alarm router-out-err:', err) })
+        this.$store.dispatch('alarmReport', _this.alarmMsg)
+        console.log('收到了后台推送的告警消息！！！！！！！！！！\n', _this.alarmMsg)
       })
       this.instance({
         'url': 'localall',

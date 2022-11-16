@@ -13,6 +13,12 @@ export default {
   TreeData: state => {
     return state.TreeData
   },
+  alarmReport: state => {
+    return state.alarmReport
+  },
+  updateTime: state => {
+    return state.updateTime
+  },
   TreeObj: state => {
     return state.TreeObj
   }

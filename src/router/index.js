@@ -5,7 +5,9 @@ import Router from 'vue-router'
 // import 'nprogress.css'
 
 import power from '@/components/power'
-import alarm from '@/components/alarm'
+import currentAlarm from '@/components/alarm/currentAlarm/index'
+import historyAlarm from '@/components/alarm/historyAlarm/index'
+import alarm from '@/components/alarm/index'
 import run from '@/components/run'
 import setting from '@/components/setting/index'
 import treeManager from '@/components/setting/userManage/index'
@@ -36,7 +38,20 @@ const router = new Router({
         {
           path: '/alarm',
           name: '告警管理',
-          component: alarm
+          redirect: '/alarm/currentAlarm/index',
+          component: alarm,
+          children: [
+            {
+              path: '/alarm/currentAlarm/index',
+              name: '当前告警',
+              component: currentAlarm
+            },
+            {
+              path: '/alarm/historyAlarm/index',
+              name: '历史告警',
+              component: historyAlarm
+            }
+          ]
         }
       ]
     },
@@ -53,7 +68,7 @@ const router = new Router({
         },
         {
           path: '/setting/deviceManage',
-          name: '告警配置',
+          name: '设备管理',
           component: alarmConfig
         }
       ]
@@ -63,27 +78,7 @@ const router = new Router({
 })
 router.beforeEach((to, from, next) => {
   // NProgress.done().start()
-  /* let toName = to.name
-  let fromName = from.name
-  // let islogin = store.state.user_info.login
-  console.log('to name= ', to.name)
-  // let islogin = 'noLogin'
-  if (toName !== 'login' && fromName !== 'login') {
-    console.log('enter 路由守卫。rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
-    next({
-      name: 'login'
-    })
-  } else {
-    if (fromName === 'login') {
-      next({
-        path: '/'
-      })
-    } else {
-      next()
-    }
-  } */
   let toName = to.name
-  // let fromName = from.name
   let isLogin = store.state.user_info.login
   console.log('路由守卫login的当前值是', isLogin)
   if (!isLogin && toName !== 'login') {

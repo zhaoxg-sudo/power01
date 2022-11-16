@@ -8,7 +8,7 @@
             <div class="form-group">
               <label class="col-sm-4 control-label">用户名</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" v-model="formData.username">
+                <input type="text" class="form-control" v-model="formData.userName">
               </div>
             </div>
           </div>
@@ -21,10 +21,25 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="col-sm-4 control-label">用户级别</label>
+              <div class="col-sm-8">
+                <label class="radio-inline">
+                  <input type="radio" value="0" v-model="formData.type">管理员
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" value="1" v-model="formData.type">操作员
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
       </el-form>
     </div>
     <div class="btnDiv">
-      <button type="button" class="btn btn-sm btn-info" @click="submitFrom(self, modolType, 'User/Create', 'User/Edit', formData,1) & refresh">确定</button>
+      <button type="button" class="btn btn-sm btn-info" @click="submitForm(self, modolType, 'user/useradd', 'user/useredit', formData,1); refresh()">确定</button>
       <button type="button" class="btn btn-sm btn-default" @click="close">取消</button>
     </div>
   </div>
@@ -53,7 +68,8 @@ export default {
       formData: {
         userName: '',
         password: '',
-        organizationID: '',
+        type: 0,
+        userOrg: '',
         userRoles: []
       },
       groupList: [],
@@ -69,7 +85,8 @@ export default {
     let userroleid = this.targetUserGroupId
     this.formData.userRoles = [{roleID: userroleid}]
     if (this.modolType === 0) { // 如果为新增，拿到当前的组织机构ID
-      this.formData.OrganizationID = this.targetMenu.organizationid
+      console.log('modal.vue of this.targetMenu', this.targetMenu)
+      this.formData.userOrg = this.targetMenu.catalogid
     } else { // 如果为编辑，拿到当前的用户的userId
       this.$ajax.get(`User/Detail/${this.targetMenu.userid}`)
         .then((res) => {

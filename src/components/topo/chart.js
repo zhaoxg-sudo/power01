@@ -35,6 +35,7 @@ class Chart {
       x: params.x,
       y: params.y,
       name: params.name,
+      title: params.title,
       text: params.text,
       type: params.type,
       catalogid: params.catalogid,
@@ -49,7 +50,7 @@ class Chart {
       onPortMousedown: this._onPortMousedown.bind(this),
       onPortMouseup: this._onPortMouseup.bind(this)
     })
-
+    // console.log('调用了addItem', params)
     this.list[item.id] = item
     return item
   }

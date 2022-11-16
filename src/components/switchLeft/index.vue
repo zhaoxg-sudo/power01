@@ -14,7 +14,10 @@ export default {
       var contentWidth = $(window).width()
       var treeWidth = $('.orgTreeList').width()
       $('.content').css('left', treeWidth)
-      $('.content').width(contentWidth - treeWidth - 10)
+      $('.content').width(contentWidth - treeWidth - 10 - 3)
+      // $('.musicMenuHalf').css('width', '85%')
+      // $('.show-area').css('width', '100%')
+      // console.log('点击了树展开按钮,show-area width=85%')
     }
   }
 }

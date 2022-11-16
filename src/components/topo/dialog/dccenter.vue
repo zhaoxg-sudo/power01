@@ -15,20 +15,23 @@
       size="medium"
       :rules="rules"
     >
-      <el-form-item label="触发方式" prop="event">
-        <el-select v-model="form.event" placeholder="请选择触发方式">
-          <el-option value="data" label="设备上报状态"></el-option>
-          <el-option value="change" label="设备状态变化"></el-option>
-          <el-option value="online" label="设备上线"></el-option>
-          <el-option value="offline" label="设备下线"></el-option>
-          <el-option value="bind" label="设备绑定"></el-option>
-          <el-option value="unbind" label="设备解绑"></el-option>
-          <el-option value="none" label="无"></el-option>
-        </el-select>
+      <el-form-item label="站点显示名称" prop="title">
+        <el-input
+          v-model="form.title"
+          auto-complete="off"
+          placeholder="必填"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="站点ID" prop="id">
+        <el-input
+          v-model="form.id"
+          auto-complete="off"
+          placeholder="必填"
+        ></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="info" @click="dialogVisible = false">取 消</el-button>
       <el-button type="primary" @click="onConfirm">确 定</el-button>
     </div>
   </el-dialog>
@@ -60,6 +63,9 @@ export default {
     onClose () {
       this.dialogVisible = false
       this.$emit('on-close', this.item)
+      this.item.updateItem({
+        text: this.form.title
+      })
     }
   }
 }
