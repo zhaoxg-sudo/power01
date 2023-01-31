@@ -10,10 +10,10 @@
   >
     <el-form
       :model="form"
+      :rules="rules"
       label-width="120px"
       ref="data"
       size="medium"
-      :rules="rules"
     >
      <el-form-item label="站点类型" prop="event">
         <el-select v-model="form.event" placeholder="请选择站点类型">
@@ -25,13 +25,6 @@
       <el-form-item label="站点显示名称" prop="title">
         <el-input
           v-model="form.title"
-          auto-complete="off"
-          placeholder="必填"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="站点ID" prop="id">
-        <el-input
-          v-model="form.id"
           auto-complete="off"
           placeholder="必填"
         ></el-input>
@@ -67,12 +60,8 @@ export default {
   },
   methods: {
     onConfirm () {
-      this.$refs['data'].validate((valid) => {
-        if (valid) {
-          this.item.data = this.form
-          this.onClose()
-        }
-      })
+      this.item.data = this.form
+      this.onClose()
     },
     onClose () {
       this.dialogVisible = false

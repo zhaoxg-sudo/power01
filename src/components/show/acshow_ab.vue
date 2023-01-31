@@ -7,7 +7,7 @@
           <form class="form-inline">
             <div class="form-group">
               <label>交流电源站点</label>
-              <input type="text" v-model="currentCatalogLabel" class="form-control" style="width:200px;">
+              <input type="text" v-model="currentCatalog.label" class="form-control" style="width:200px;">
               <span :class="autoUpdate == true ? 'selected' : ''" @click="changeType(1)">自动更新</span>
             </div>
             <button type="button" class="btn btn-info" @click="refresh">
@@ -23,25 +23,25 @@
            </div>
            <form class="form-inline">
              <div class="form-group">
-               <label>A相电压(V)</label>
+               <label>&nbsp;&nbsp;A相电压(V)&nbsp;</label>
                <input type="text" v-model="paramShow.av" class="form-control" style="width:120px;">
              </div>
            </form>
            <form class="form-inline">
              <div class="form-group">
-               <label>B相电压(V)</label>
+               <label>&nbsp;&nbsp;B相电压(V)&nbsp;</label>
                <input type="text" v-model="paramShow.bv" class="form-control" style="width:120px;">
              </div>
            </form>
            <form class="form-inline">
              <div class="form-group">
-               <label>C相电压(V)</label>
+               <label>&nbsp;&nbsp;C相电压(V)&nbsp;</label>
                <input type="text" v-model="paramShow.cv" class="form-control" style="width:120px;">
              </div>
            </form>
            <form class="form-inline">
              <div class="form-group">
-               <label>平均电压(V)</label>
+               <label>&nbsp;&nbsp;平均电压(V)</label>
                <input type="text" v-model="paramShow.abcv" class="form-control" style="width:120px;">
              </div>
            </form>
@@ -52,25 +52,25 @@
            </div>
            <form class="form-inline">
              <div class="form-group">
-               <label>A相电流(A)</label>
+               <label>&nbsp;&nbsp;A相电流(A)&nbsp;</label>
                <input type="text" v-model="paramShow.aa" class="form-control" style="width:120px;">
              </div>
            </form>
            <form class="form-inline">
              <div class="form-group">
-               <label>B相电流(A)</label>
+               <label>&nbsp;&nbsp;B相电流(A)&nbsp;</label>
                <input type="text" v-model="paramShow.ba" class="form-control" style="width:120px;">
              </div>
            </form>
            <form class="form-inline">
              <div class="form-group">
-               <label>C相电流(A)</label>
+               <label>&nbsp;&nbsp;C相电流(A)&nbsp;</label>
                <input type="text" v-model="paramShow.ca" class="form-control" style="width:120px;">
              </div>
            </form>
             <form class="form-inline">
              <div class="form-group">
-               <label>平均电流(A)</label>
+               <label>&nbsp;&nbsp;平均电流(A)</label>
                <input type="text" v-model="paramShow.abca" class="form-control" style="width:120px;">
              </div>
            </form>
@@ -83,7 +83,7 @@
         <div>
            <form class="form-inline">
              <div class="form-group">
-               <label>市电指示</label>
+               <label>&nbsp;&nbsp;市电指示</label>
                <el-switch
                  v-model="paramShow.mainstatus"
                  active-color="#13ce66"
@@ -132,7 +132,7 @@
          <div>
            <form class="form-inline">
              <div class="form-group">
-               <label>A相欠压</label>
+               <label>&nbsp;&nbsp;A相欠压</label>
                <el-switch
                  v-model="paramShow.auv"
                  active-color="#ff4949"
@@ -182,7 +182,7 @@
            </form>
             <form class="form-inline">
              <div class="form-group">
-               <label>A相过流</label>
+               <label>&nbsp;&nbsp;A相过流</label>
                <el-switch
                  v-model="paramShow.aoa"
                  active-color="#ff4949"
@@ -230,6 +230,16 @@
                </el-switch>
              </div>
            </form>
+           <form class="form-inline">
+             <div class="form-group">
+               <label>&nbsp;&nbsp;通信故障</label>
+               <el-switch
+                 v-model="paramShow.com"
+                 active-color="#ff4949"
+                 inactive-color="#999">
+               </el-switch>
+             </div>
+           </form>
          </div>
        </div>
     </div>
@@ -244,7 +254,7 @@ export default {
   name: '',
   components: {
   },
-  props: ['currentCatalogLabel', 'currentCatalogID', 'allChildrenList'],
+  props: ['currentCatalog', 'allChildrenList'],
   data () {
     return {
       runtime: '1111',
@@ -259,6 +269,7 @@ export default {
       paramShow: {
         station: '',
         type: '',
+        com: true,
         auv: true,
         buv: true,
         cuv: true,
@@ -409,14 +420,15 @@ export default {
       })
     },
     // 读取运行状态
-    refresh () {
-      let catalogid = this.currentCatalogID
+    async refresh () {
+      let catalogid = this.currentCatalog.id
       let _this = this
       // catalogid = '4444'
-      this.getAllCurrentAlarm()
+      let ipaddress = this.currentCatalog.ipaddress
+      await this.getAllCurrentAlarm()
       console.log('acshow_ab 这次读取运行状态的catalogid：=', catalogid)
       this.instance({
-        url: '/device/local/getacparam/' + catalogid,
+        url: '/device/local/getacparamfromagent/' + catalogid,
         method: 'get'
       }).then(res => {
         if (res.data.code === 1) {
@@ -424,10 +436,16 @@ export default {
           let msg = res.data.result
           // console.log('msg电源运行状态读取成功！', msg)
           let msgJson = JSON.parse(msg)
-          console.log('acshow_ab电源运行状态读取成功json！', msgJson)
+          let receivedAddress = msgJson.ipaddress.toString()
+          if (ipaddress === receivedAddress) {
+            console.log('acshow_ab电源运行状态读取成功json！', msgJson, catalogid)
+          } else {
+            console.log('acshow_ab电源运行状态读取失败？？？？？？？？？json！', msgJson, catalogid)
+          }
           _this.paramShow.catalogid = catalogid
-          _this.paramShow.station = _this.currentCatalogLabel
+          _this.paramShow.station = _this.currentCatalog.label
           _this.paramShow.type = '交流'
+          _this.paramShow.com = _this.alarmStatus(msgJson.com.toString())
           _this.paramShow.auv = _this.alarmStatus(msgJson.auv.toString())
           _this.paramShow.buv = _this.alarmStatus(msgJson.buv.toString())
           _this.paramShow.cuv = _this.alarmStatus(msgJson.cuv.toString())
@@ -456,8 +474,8 @@ export default {
           _this.paramShow.time = msgJson.time.toString()
           // alarm restore
           for (let i = 0; i < _this.currentAlarmTable.length; i++) {
-            if (this.currentAlarmTable[i].alarmmudid === _this.paramShow.station) {
-              console.log('acShow发现告警记录已存在.............\n', _this.paramShow.station)
+            if (this.currentAlarmTable[i].alarmmudid === _this.paramShow.catalogid) {
+              console.log('acShow发现当前告警记录已存在.............\n', this.currentAlarmTable[i], _this.paramShow)
               let restoreTable = _this.alarmRestoreCheck(this.currentAlarmTable[i], _this.paramShow)
               console.log('acShow找到了告警恢复了嘛？？=', restoreTable)
               if (restoreTable.length > 0) {
@@ -497,14 +515,14 @@ export default {
     // restoreProcess
     restoreProcess (r) {
       console.log('acShow 查询到了告警恢复！！！！！！！！！！\n', r)
-      this.$emit('alarmRestored', r)
+      // this.$emit('alarmRestored', r)
     },
     // alarm restore check
     alarmRestoreCheck (oldAlarm, newAlarm) {
       let restoredTable = []
-      let arrayData = new Array(12)
+      let arrayData = new Array(13)
       console.log('alarmRestoreCheck', oldAlarm, newAlarm)
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 13; i++) {
         arrayData[i] = {
           alarmid: '',
           alarmrestoreflag: false,
@@ -583,25 +601,31 @@ export default {
         arrayData[11].alarmrestoreinfo = newAlarm.time
         restoredTable.push(arrayData[11])
       }
+      if (oldAlarm.alarmdetail === 'com' && newAlarm.com === false) {
+        arrayData[12].alarmid = oldAlarm.alarmid
+        arrayData[12].alarmrestoreflag = true
+        arrayData[12].alarmrestoreinfo = newAlarm.time
+        restoredTable.push(arrayData[12])
+      }
       return restoredTable
     },
     // alarmProcess
     alarmProcess (a) {
       console.log('acShow查询到了告警！！！！！！！！！！\n', a)
       // 向上级vue发送alarmFired消息
-      this.$emit('alarmFired', a)
+      // this.$emit('alarmFired', a)
     },
     // alarm check
     alarmCheck (a) {
       let alarmFired = false
       alarmFired = a.auv | a.buv | a.cuv | a.aov | a.bov | a.cov | a.aoa | a.boa | a.coa | a.afu | a.bfu | a.cfu
       let alarmTable0 = []
-      let arrayData = new Array(12)
-      for (let i = 0; i < 12; i++) {
+      let arrayData = new Array(13)
+      for (let i = 0; i < 13; i++) {
         arrayData[i] = {
           alarmid: '',
           alarmstation: a.station,
-          alarmmudid: a.station,
+          alarmmudid: a.catalogid,
           alarmreceivedtime: a.time,
           alarmfiredtime: a.time,
           alarmdetail: '',
@@ -724,6 +748,15 @@ export default {
           console.log('cfu', arrayData[11])
           alarmTable0.push(arrayData[11])
           console.log('cfu后', alarmTable0)
+        }
+        if (a.com) {
+          arrayData[12].alarmdetail = 'com'
+          arrayData[12].alarmid = a.catalogid + '_' + a.time + '_' + arrayData[12].alarmdetail
+          arrayData[12].alarmStatus = true
+          arrayData[12].time = a.time
+          console.log('com', arrayData[12])
+          alarmTable0.push(arrayData[12])
+          console.log('com后', alarmTable0)
         }
         console.log('acShow查询到了告警！！！！！！！！！！\n', alarmTable0)
         return alarmTable0

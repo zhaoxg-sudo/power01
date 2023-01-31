@@ -316,6 +316,9 @@ export default {
         case 'cfu' :
           view = 'C相保险'
           break
+        case 'com' :
+          view = '通信故障'
+          break
       }
       return view
     },

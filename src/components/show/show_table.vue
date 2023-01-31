@@ -1,5 +1,5 @@
 <template>
-  <div class="show-area">
+  <div class="show-area-table">
      <div class="tableTool">
       <form class="form-inline">
             <div class="form-group">
@@ -101,9 +101,10 @@ export default {
       readErrorNum: 0,
       showTable: [],
       currentAlarmTable: [],
-      paramShow: {
+      paramShow0: {
         station: '',
         type: '',
+        com: '',
         auv: '',
         buv: '',
         cuv: '',
@@ -272,6 +273,9 @@ export default {
       if (a !== []) {
         for (let i = 0; i < a.length; i++) {
           switch (a[i].alarmdetail) {
+            case 'com' :
+              view = view + '通信故障' + ','
+              break
             case 'auv' :
               view = view + 'A相欠压' + ','
               break
@@ -341,65 +345,78 @@ export default {
     readAcParam (data) {
       let _this = this
       console.log('show_table 这次读取运行状态的catalogid：=', data.catalogid)
+      let catalogid = data.catalogid
+      let station = data.label
+      let ipaddress = data.ipaddress
+      // let paramShow = {}
       this.instance({
-        url: '/device/local/getacparam/' + data.catalogid,
+        url: '/device/local/getacparamfromagent/' + data.catalogid,
         method: 'get'
       }).then(res => {
         if (res.data.code === 1) {
           // console.log('res电源运行状态读取成功！', res)
           let msg = res.data.result
+          let receivedCatalogID = res.data.catalogid
+          let paramShow = {}
           // console.log('msg电源运行状态读取成功！', msg)
           let msgJson = JSON.parse(msg)
-          console.log('show_table电源运行状态读取成功json！', msgJson)
-          _this.paramShow.catalogid = data.catalogid
-          _this.paramShow.station = data.label
-          if (data.protocoltype === '2') {
-            _this.paramShow.type = '交流'
-          } if (data.protocoltype === '1') {
-            _this.paramShow.type = '直流'
+          let receivedAddress = msgJson.ipaddress.toString()
+          if (ipaddress === receivedAddress) {
+            console.log('show_table电源运行状态读取成功json！', msgJson, catalogid, receivedCatalogID)
+          } else {
+            console.log('show_table电源运行状态读取失败？？？？？？？？？json！', msgJson, catalogid)
           }
-          _this.paramShow.auv = _this.alarmStatus(msgJson.auv.toString())
+          paramShow.catalogid = catalogid
+          paramShow.station = station
+          if (data.protocoltype === '2') {
+            paramShow.type = '交流'
+          } if (data.protocoltype === '1') {
+            paramShow.type = '直流'
+          }
+          paramShow.com = _this.alarmStatus(msgJson.com.toString())
+          paramShow.auv = _this.alarmStatus(msgJson.auv.toString())
           // _this.paramShow.auv = true
-          _this.paramShow.buv = _this.alarmStatus(msgJson.buv.toString())
-          _this.paramShow.cuv = _this.alarmStatus(msgJson.cuv.toString())
-          _this.paramShow.aov = _this.alarmStatus(msgJson.aov.toString())
-          _this.paramShow.bov = _this.alarmStatus(msgJson.bov.toString())
-          _this.paramShow.cov = _this.alarmStatus(msgJson.cov.toString())
-          _this.paramShow.aoa = _this.alarmStatus(msgJson.aoa.toString())
-          _this.paramShow.boa = _this.alarmStatus(msgJson.boa.toString())
-          _this.paramShow.coa = _this.alarmStatus(msgJson.coa.toString())
-          _this.paramShow.afu = _this.alarmStatus(msgJson.afu.toString())
-          _this.paramShow.bfu = _this.alarmStatus(msgJson.bfu.toString())
-          _this.paramShow.cfu = _this.alarmStatus(msgJson.cfu.toString())
-          _this.paramShow.abcv = parseInt(msgJson.abcv.toString(), 16) / 10
-          _this.paramShow.av = parseInt(msgJson.av.toString(), 16) / 10
-          _this.paramShow.bv = parseInt(msgJson.bv.toString(), 16) / 10
-          _this.paramShow.cv = parseInt(msgJson.cv.toString(), 16) / 10
-          _this.paramShow.abca = parseInt(msgJson.abca.toString(), 16) / 10
-          _this.paramShow.aa = parseInt(msgJson.aa.toString(), 16) / 10
-          _this.paramShow.ba = parseInt(msgJson.ba.toString(), 16) / 10
-          _this.paramShow.ca = parseInt(msgJson.ca.toString(), 16) / 10
-          _this.paramShow.mainstatus = _this.indStatus(msgJson.mainstatus.toString())
-          _this.paramShow.stabilestatus = _this.indStatus(msgJson.stabilestatus.toString())
-          _this.paramShow.stepstatus = _this.indStatus(msgJson.stepstatus.toString())
-          _this.paramShow.syncstatus = _this.indStatus(msgJson.syncstatus.toString())
-          _this.paramShow.autostatus = _this.indStatus(msgJson.autostatus.toString())
-          _this.paramShow.alarmstatus = ''
-          _this.paramShow.time = msgJson.time.toString()
+          paramShow.buv = _this.alarmStatus(msgJson.buv.toString())
+          paramShow.cuv = _this.alarmStatus(msgJson.cuv.toString())
+          paramShow.aov = _this.alarmStatus(msgJson.aov.toString())
+          paramShow.bov = _this.alarmStatus(msgJson.bov.toString())
+          paramShow.cov = _this.alarmStatus(msgJson.cov.toString())
+          paramShow.aoa = _this.alarmStatus(msgJson.aoa.toString())
+          paramShow.boa = _this.alarmStatus(msgJson.boa.toString())
+          paramShow.coa = _this.alarmStatus(msgJson.coa.toString())
+          paramShow.afu = _this.alarmStatus(msgJson.afu.toString())
+          paramShow.bfu = _this.alarmStatus(msgJson.bfu.toString())
+          paramShow.cfu = _this.alarmStatus(msgJson.cfu.toString())
+          paramShow.abcv = parseInt(msgJson.abcv.toString(), 16) / 10
+          paramShow.av = parseInt(msgJson.av.toString(), 16) / 10
+          paramShow.bv = parseInt(msgJson.bv.toString(), 16) / 10
+          paramShow.cv = parseInt(msgJson.cv.toString(), 16) / 10
+          paramShow.abca = parseInt(msgJson.abca.toString(), 16) / 10
+          paramShow.aa = parseInt(msgJson.aa.toString(), 16) / 10
+          paramShow.ba = parseInt(msgJson.ba.toString(), 16) / 10
+          paramShow.ca = parseInt(msgJson.ca.toString(), 16) / 10
+          paramShow.mainstatus = _this.indStatus(msgJson.mainstatus.toString())
+          paramShow.stabilestatus = _this.indStatus(msgJson.stabilestatus.toString())
+          paramShow.stepstatus = _this.indStatus(msgJson.stepstatus.toString())
+          paramShow.syncstatus = _this.indStatus(msgJson.syncstatus.toString())
+          paramShow.autostatus = _this.indStatus(msgJson.autostatus.toString())
+          paramShow.alarmstatus = ''
+          paramShow.time = msgJson.time.toString()
+          paramShow.receivedCatalogID = receivedCatalogID
           // alarm process
-          let alarmTable = this.alarmCheck(_this.paramShow)
+          let alarmTable = this.alarmCheck(paramShow)
           // console.log('alarmTable============', alarmTable)
           if (alarmTable !== null) {
             this.alarmProcess(alarmTable)
             let alarm = this.alarmView(alarmTable)
             console.log('alarm============', alarm)
-            _this.paramShow.alarmstatus = alarm
+            paramShow.alarmstatus = alarm
           }
           // alarm restore
           for (let i = 0; i < _this.currentAlarmTable.length; i++) {
-            if (this.currentAlarmTable[i].alarmmudid === _this.paramShow.station) {
-              console.log('发现告警记录已存在.............\n', _this.paramShow.station)
-              let restoreTable = _this.alarmRestoreCheck(this.currentAlarmTable[i], _this.paramShow)
+            if (this.currentAlarmTable[i].alarmmudid === paramShow.catalogid) {
+              console.log('show_table发现当前告警记录已存在.............\n', this.currentAlarmTable[i], paramShow)
+              let restoreTable = _this.alarmRestoreCheck(this.currentAlarmTable[i], paramShow)
               console.log('找到了告警恢复了嘛？？=', restoreTable)
               if (restoreTable.length > 0) {
                 this.restoreProcess(restoreTable)
@@ -408,20 +425,52 @@ export default {
           }
           let exist = false
           for (let i = 0; i < _this.showTable.length; i++) {
-            if (_this.showTable[i].station === _this.paramShow.station) {
-              _this.showTable[i] = _this.paramShow
+            if (_this.showTable[i].station === paramShow.station) {
+              console.log('show_table 发现电源已存在+——+——+——+——+——+——+——', _this.showTable[i], paramShow)
+              // _this.showTable.splice(i, 1)
+              _this.showTable[i].catalogid = paramShow.catalogid
+              _this.showTable[i].station = paramShow.station
+              _this.showTable[i].type = paramShow.type
+              _this.showTable[i].com = paramShow.com
+              _this.showTable[i].auv = paramShow.auv
+              _this.showTable[i].buv = paramShow.buv
+              _this.showTable[i].cuv = paramShow.cuv
+              _this.showTable[i].aov = paramShow.aov
+              _this.showTable[i].bov = paramShow.bov
+              _this.showTable[i].cov = paramShow.cov
+              _this.showTable[i].aoa = paramShow.aoa
+              _this.showTable[i].boa = paramShow.boa
+              _this.showTable[i].coa = paramShow.coa
+              _this.showTable[i].afu = paramShow.afu
+              _this.showTable[i].bfu = paramShow.bfu
+              _this.showTable[i].cfu = paramShow.cfu
+              _this.showTable[i].abcv = paramShow.abcv
+              _this.showTable[i].av = paramShow.av
+              _this.showTable[i].bv = paramShow.bv
+              _this.showTable[i].cv = paramShow.cv
+              _this.showTable[i].abca = paramShow.abca
+              _this.showTable[i].aa = paramShow.aa
+              _this.showTable[i].ba = paramShow.ba
+              _this.showTable[i].ca = paramShow.ca
+              _this.showTable[i].mainstatus = paramShow.mainstatus
+              _this.showTable[i].stabilestatus = paramShow.stabilestatus
+              _this.showTable[i].stepstatus = paramShow.stepstatus
+              _this.showTable[i].syncstatus = paramShow.syncstatus
+              _this.showTable[i].autostatus = paramShow.autostatus
+              _this.showTable[i].alarmstatus = paramShow.alarmstatus
+              _this.showTable[i].time = paramShow.time
               exist = true
               break
             }
           }
-          if (!exist) _this.showTable.push(_this.paramShow)
-          console.log('show_table电源AC参数读取成功！param', _this.paramShow)
-          // // alarm process
-          // let alarmTable = this.alarmCheck(_this.paramShow)
-          // if (alarmTable) {
-          //   this.alarmProcess(alarmTable)
-          //   _this.paramShow.alarmstatus = alarmTable
-          // }
+          if (!exist) {
+            _this.showTable.unshift(paramShow)
+            console.log('show_table电源AC参数push+++++++++++++++\n', paramShow)
+          }
+          for (let i = 0; i < _this.showTable.length; i++) {
+            console.log('show_table电源AC参数表当前数据\n', _this.showTable[i])
+          }
+          console.log('show_table电源AC参数读取成功！param', paramShow)
         } else {
           console.log('show_table本次电源AC参数读取失败？？？', res)
           _this.readErrorNum = _this.readErrorNum + 1
@@ -433,7 +482,7 @@ export default {
     alarmProcess (a) {
       console.log('show_table 查询到了告警！！！！！！！！！！\n', a)
       // 向上级vue发送alarmFired消息
-      this.$emit('alarmFired', a)
+      // this.$emit('alarmFired', a)
       // 查询当前告警列表
       // 新告警写入当前告警数据库
       // 跳转到当前告警界面并处理
@@ -442,14 +491,14 @@ export default {
     restoreProcess (r) {
       console.log('show_table 查询到了告警恢复！！！！！！！！！！\n', r)
       // 向上级vue发送alarmRestore消息
-      this.$emit('alarmRestored', r)
+      // this.$emit('alarmRestored', r)
     },
     // alarm restore check
     alarmRestoreCheck (oldAlarm, newAlarm) {
       let restoredTable = []
-      let arrayData = new Array(12)
+      let arrayData = new Array(13)
       console.log('alarmRestoreCheck', oldAlarm, newAlarm)
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 13; i++) {
         arrayData[i] = {
           alarmid: '',
           alarmrestoreflag: false,
@@ -528,19 +577,25 @@ export default {
         arrayData[11].alarmrestoreinfo = newAlarm.time
         restoredTable.push(arrayData[11])
       }
+      if (oldAlarm.alarmdetail === 'com' && newAlarm.com === false) {
+        arrayData[12].alarmid = oldAlarm.alarmid
+        arrayData[12].alarmrestoreflag = true
+        arrayData[12].alarmrestoreinfo = newAlarm.time
+        restoredTable.push(arrayData[12])
+      }
       return restoredTable
     },
     // alarm fired check
     alarmCheck (a) {
       let alarmFired = false
-      alarmFired = a.auv | a.buv | a.cuv | a.aov | a.bov | a.cov | a.aoa | a.boa | a.coa | a.afu | a.bfu | a.cfu
+      alarmFired = a.auv | a.buv | a.cuv | a.aov | a.bov | a.cov | a.aoa | a.boa | a.coa | a.afu | a.bfu | a.cfu | a.com
       let alarmTable0 = []
-      let arrayData = new Array(12)
-      for (let i = 0; i < 12; i++) {
+      let arrayData = new Array(13)
+      for (let i = 0; i < 13; i++) {
         arrayData[i] = {
           alarmid: '',
           alarmstation: a.station,
-          alarmmudid: a.station,
+          alarmmudid: a.catalogid,
           alarmreceivedtime: a.time,
           alarmfiredtime: a.time,
           alarmdetail: '',
@@ -664,6 +719,15 @@ export default {
           alarmTable0.push(arrayData[11])
           console.log('cfu后', alarmTable0)
         }
+        if (a.com) {
+          arrayData[12].alarmdetail = 'com'
+          arrayData[12].alarmid = a.catalogid + '_' + a.time + '_' + arrayData[11].alarmdetail
+          arrayData[12].alarmStatus = true
+          arrayData[12].time = a.time
+          console.log('com', arrayData[12])
+          alarmTable0.push(arrayData[12])
+          console.log('com后', alarmTable0)
+        }
         console.log('查询到了告警！！！！！！！！！！\n', alarmTable0)
         return alarmTable0
       }
@@ -723,7 +787,7 @@ table tbody::-webkit-scrollbar-thumb:active {
   background: #4E545A
 
 }
-.show-area{overflow-y:auto;}
+/* .show-area{overflow-y:auto;}
 ::-webkit-scrollbar-button{  }
 ::-webkit-scrollbar-track{ }
 ::-webkit-scrollbar-track-piece {}
@@ -733,5 +797,5 @@ table tbody::-webkit-scrollbar-thumb:active {
 }
 
 ::-webkit-scrollbar-corner {  }
-::-webkit-resizer{}
+::-webkit-resizer{} */
 </style>

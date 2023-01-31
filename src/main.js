@@ -40,7 +40,7 @@ Vue.use(new VueSocketio({
 }))
 Vue.prototype.$ajax = axios
 // enable vue tools
-Vue.config.devtools = true
+Vue.config.devtools = false
 
 Vue.config.productionTip = false
 

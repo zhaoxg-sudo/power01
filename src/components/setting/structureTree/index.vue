@@ -211,6 +211,7 @@ export default {
                 // 删除内存 end
                 console.log('删除树节点成功', res.data.result)
                 this.$message.success('删除树节点成功')
+                this.refresh()
                 // 3,del topo item
                 this.instance({
                   url: 'topo/delitem',

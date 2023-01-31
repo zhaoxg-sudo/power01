@@ -10,10 +10,10 @@
   >
     <el-form
       :model="form"
+      :rules="rules"
       label-width="120px"
       ref="data"
       size="medium"
-      :rules="rules"
     >
       <el-form-item label="站点类型" prop="event">
         <el-select v-model="form.event" placeholder="请选择站点类型">
@@ -25,13 +25,6 @@
       <el-form-item label="站点显示名称" prop="title">
         <el-input
           v-model="form.title"
-          auto-complete="off"
-          placeholder="必填"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="站点ID" prop="id">
-        <el-input
-          v-model="form.id"
           auto-complete="off"
           placeholder="必填"
         ></el-input>
@@ -52,16 +45,12 @@ export default {
   props: ['item'],
   data () {
     return {
-      form: _.cloneDeep(this.item.data) || {
-        method: 'GET',
-        schema: `{"$schema":"", "type":""}`,
-        refresh: 3600
-      },
+      form: _.cloneDeep(this.item.data) || {},
       name: name,
       dialogVisible: true,
       rules: {
-        inputUrl: [
-          { required: true, message: '请输入获取数据的URL', trigger: 'blur' }
+        title: [
+          { required: true, message: '站点名称不能为空', trigger: 'blur' }
         ],
         schema: [{ required: true, message: '请输入Schema', trigger: 'blur' }],
         alias: [
@@ -76,12 +65,8 @@ export default {
   },
   methods: {
     onConfirm () {
-      this.$refs['data'].validate((valid) => {
-        if (valid) {
-          this.item.data = this.form
-          this.onClose()
-        }
-      })
+      this.item.data = this.form
+      this.onClose()
     },
     onClose () {
       this.dialogVisible = false

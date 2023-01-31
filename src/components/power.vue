@@ -5,6 +5,7 @@
       <footNav  :username = "username"></footNav>
       <switchLeft></switchLeft>
       <treeList></treeList>
+      <audio ref = "alarm"  src = "alarm.mp3" ></audio>
   </div>
 </template>
 
@@ -53,7 +54,7 @@ export default {
         // console.log(data)
         _this.alarmMsg = data
         this.$router.push('/alarm/currentAlarm/index').catch(err => { console.log('\nroot user alarm router-out-err:', err) })
-        this.$store.dispatch('alarmReport', _this.alarmMsg)
+        this.$refs.alarm.play().catch(err => { console.log('\nalarm play：', err) })
         console.log('收到了后台推送的告警消息！！！！！！！！！！\n', _this.alarmMsg)
       })
       this.instance({

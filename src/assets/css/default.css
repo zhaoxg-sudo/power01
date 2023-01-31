@@ -1307,7 +1307,15 @@ span.times {
 .show-area {
     width: 100%;
     height: 460px;
+    /* overflow: auto; */
     background: #313439;
+}
+
+.show-area-table {
+    width: 100%;
+    height: 460px;
+    overflow: auto;
+    background: #4E545A;
 }
 
 .run-area {
@@ -1735,7 +1743,7 @@ ul.statusTpye>li>span {
 
 .popUp {
     position: absolute;
-    width: 500px;
+    width: 600px;
     background: linear-gradient(#282F32, #626971) top;
     color: #fff;
     text-align: center;

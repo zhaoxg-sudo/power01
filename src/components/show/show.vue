@@ -1,7 +1,7 @@
 <template>
   <div>
      <div v-if="acshow==true">
-       <acshowab :currentCatalogLabel='currentCatalogLabel' :currentCatalogID='currentCatalogID' :allChildrenList='allChildrenList' @alarmFired='alarmFired' @alarmRestored='alarmRestored'></acshowab>
+       <acshowab :currentCatalog='currentCatalog' :allChildrenList='allChildrenList' @alarmFired='alarmFired' @alarmRestored='alarmRestored'></acshowab>
      </div>
       <div v-if="acshow==false">
        <dcshowsh :currentCatalogLabel='currentCatalogLabel' :currentCatalogID='currentCatalogID'></dcshowsh>
@@ -31,6 +31,7 @@ export default {
       allChildrenList: [],
       updatetime: 5000,
       timer: [],
+      currentCatalog: {},
       currentCatalogID: '',
       currentCatalogLabel: '',
       acshow: null,
@@ -47,6 +48,9 @@ export default {
         this.currentCatalogID = data.catalogid
         this.protocalType = data.protocoltype
         this.currentCatalogLabel = data.label
+        this.currentCatalog.label = data.label
+        this.currentCatalog.id = data.catalogid
+        this.currentCatalog.ipaddress = data.ipaddress
         let nodelist = []
         let catalogList = []
         nodelist.push(data)
@@ -76,6 +80,9 @@ export default {
     this.currentCatalogID = this.currentTreeData.catalogid
     this.currentCatalogLabel = this.currentTreeData.label
     this.protocalType = this.currentTreeData.protocoltype
+    this.currentCatalog.label = this.currentTreeData.label
+    this.currentCatalog.id = this.currentTreeData.catalogid
+    this.currentCatalog.ipaddress = this.currentTreeData.ipaddress
     let nodelist = []
     let catalogList = []
     nodelist.push(this.currentTreeData)

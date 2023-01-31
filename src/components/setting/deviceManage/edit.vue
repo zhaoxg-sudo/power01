@@ -28,7 +28,7 @@
               </div>
             </div>
           </div>
-	<div class="col-md-6">
+	        <div class="col-md-6">
             <div class="form-group">
               <label class="col-sm-4 control-label">密码</label>
               <div class="col-sm-8">

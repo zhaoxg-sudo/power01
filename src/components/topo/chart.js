@@ -345,16 +345,17 @@ class Chart {
     switch (d3.event.keyCode) {
       case 8:
       case 46:
-        if (this.selectedLine) {
-          this.selectedLine.remove()
-          delete this.lineList[this.selectedLine.id]
-          this.selectedLine = null
-        }
-        if (this.selectedItem) {
-          this.selectedItem.remove()
-          delete this.list[this.selectedItem.id]
-          this.selectedItem = null
-        }
+        // if (this.selectedLine) {
+        //   this.selectedLine.remove()
+        //   delete this.lineList[this.selectedLine.id]
+        //   this.selectedLine = null
+        // }
+        // if (this.selectedItem) {
+        //   this.selectedItem.remove()
+        //   delete this.list[this.selectedItem.id]
+        //   this.selectedItem = null
+        // }
+        console.log('监测到了：键盘up事件', d3.event.keyCode)
         break
     }
   }
