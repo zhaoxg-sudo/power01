@@ -31,9 +31,13 @@
             <td>告警状态</td>
           </tr>
         </thead>
-        <tbody>
-          <tr  v-for="item in showTable" :key="item.station">
-            <td>{{item.station}}</td>
+        <tbody v-for="item in showTable" :key="item.station">
+          <tr>
+            <td>
+              {{item.station}}
+              <input type="checkbox" id="inlineCheckbox" v-model="item.expendFlag" @click="remoteExpand(item, !item.expendFlag)">
+              <!-- <label for="checkbox">{{expandView(item.expendFlag)}}</label> -->
+            </td>
             <td>{{item.type}}</td>
             <td>{{item.av + 'V'}}</td>
             <td>{{item.bv + 'V'}}</td>
@@ -78,6 +82,36 @@
             </td>
             <td :style="{backgroundColor:item.alarmstatus!=''?'#ff4949':'#999'}">{{item.alarmstatus}}</td>
           </tr>
+          <tr>
+            <td  v-show="item.expendFlag">
+              <table border=”2” bordercolor=”red”>
+                <!-- <thead> -->
+                <tr>
+                  <td rowspan="3">{{item.station}}</td>
+                  <th scope="col">远端标识</th>
+                  <th scope="col">远端名称</th>
+                  <th scope="col">输入电压</th>
+                  <th scope="col">输出电压</th>
+                  <th scope="col">输出电流</th>
+                  <th scope="col">输出功率</th>
+                  <th scope="col">告警状态</th>
+                </tr>
+                <!-- </thead> -->
+                <!-- <tbody> -->
+                 <tr v-for="items in showTable" :key="items.station">
+                  <td>{{items.station}}</td>
+                  <td>{{items.station}}</td>
+                  <td>{{items.station}}</td>
+                  <td>{{items.station}}</td>
+                  <td>{{items.station}}</td>
+                  <td>{{items.station}}</td>
+                  <td>{{items.station}}</td>
+                  <td>{{items.station}}</td>
+                </tr>
+                <!-- </tbody> -->
+              </table>
+            </td>
+          </tr>
         </tbody>
     </table>
   </div>
@@ -100,6 +134,7 @@ export default {
       runMsg: 'runstatus',
       readErrorNum: 0,
       showTable: [],
+      rowlength: 2,
       currentAlarmTable: [],
       paramShow0: {
         station: '',
@@ -238,6 +273,21 @@ export default {
         }
       }
       $('.selected').removeClass('selected')
+    },
+    expandView (v) {
+      let view = ''
+      // console.log('mudid in ', v)
+      if (v) {
+        view = '远端已展开'
+      } else {
+        view = '远端未展开'
+      }
+      return view
+    },
+    remoteExpand (e, visible) {
+      if (visible) {
+        e.expendFlag = true
+      }
     },
     // 指示状态转换
     indStatus (a) {
@@ -403,6 +453,7 @@ export default {
           paramShow.alarmstatus = ''
           paramShow.time = msgJson.time.toString()
           paramShow.receivedCatalogID = receivedCatalogID
+          paramShow.expendFlag = true
           // alarm process
           let alarmTable = this.alarmCheck(paramShow)
           // console.log('alarmTable============', alarmTable)
@@ -756,7 +807,7 @@ tbody {
   display: block;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 500px;
+  height: 100%;
 }
 thead,
 tbody tr {
@@ -765,7 +816,7 @@ tbody tr {
   table-layout: fixed;
   word-break: break-all;
 }
-/* 滚动条样式 */
+
 table tbody::-webkit-scrollbar {
   width: 6px;
 }
@@ -785,7 +836,6 @@ table tbody::-webkit-scrollbar-thumb:active {
 ::-webkit-scrollbar{
   width: 5px;
   background: #4E545A
-
 }
 /* .show-area{overflow-y:auto;}
 ::-webkit-scrollbar-button{  }

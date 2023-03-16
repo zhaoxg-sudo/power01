@@ -17,13 +17,13 @@ let bgColor = {
 }
 
 let icon = {
-  STATION: require('./images/report.png'),
-  CUSTOM_DATA: require('./images/online.png'),
-  DCCENTER: require('./images/condition.png'),
-  ACCENTER: require('./images/caculator.png'),
-  ACREMOTE: require('./images/post.png'),
-  DCREMOTE: require('./images/http.png'),
-  EMAIL: require('./images/email.png')
+  STATION: require('./images/station.png'),
+  // CUSTOM_DATA: require('./images/online.png'),
+  DCCENTER: require('./images/dccenter.png'),
+  ACCENTER: require('./images/accenter.png'),
+  ACREMOTE: require('./images/acremote.png'),
+  DCREMOTE: require('./images/dcremote.png')
+  // EMAIL: require('./images/email.png')
 }
 
 let name = {

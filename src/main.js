@@ -8,6 +8,8 @@ import ElementUI from 'element-ui'
 import axios from 'axios'
 // 导入JQ
 // import $ from 'jquery'
+// 导入excel
+import JsonExcel from 'vue-json-excel'
 import VueSocketio from 'vue-socket.io'
 // 引入element ui tree css
 import 'element-ui/lib/theme-chalk/index.css'
@@ -39,6 +41,7 @@ Vue.use(new VueSocketio({
 
 }))
 Vue.prototype.$ajax = axios
+Vue.component('downloadExcel', JsonExcel)
 // enable vue tools
 Vue.config.devtools = false
 

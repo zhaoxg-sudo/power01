@@ -5,20 +5,11 @@
         <span>Hi {{username}}<a @click="logout()"> [退出]</a>
           <a v-if="showSetting" @click="setting()"><i class="fa fa-cogs"></i>配置管理</a>
           <a @click="$router.go(0)"><i class="fa fa-refresh"></i>刷新页面</a>
-          &nbsp;  &nbsp;&nbsp; copyright©北京三合云海科技有限责任公司  &nbsp;&nbsp; v0.9.12 dev-agent 2023.0128
+          &nbsp;  &nbsp;&nbsp; copyright©北京三合云海科技有限责任公司  &nbsp;&nbsp; v0.9.13 远端模块显示-ok 2023.0223
         </span>
       </div>
     </div>
     <audio id="music"></audio>
-    <div class="span_large">
-      <el-tooltip :content="leftwatcher" placement="top" :disabled="leftwatcher == ''">
-      <div :class="this.enable_leftwatcher==false?'':'fa fa-phone fa-2x'"></div>
-      </el-tooltip>
-      <el-tooltip :content="mobile" placement="top" :disabled="mobile == ''">
-      <div :class="this.enable_mobile == false?'':'fa fa-mobile fa-2x'"></div>
-      </el-tooltip>
-      <div></div>
-    </div>
   </div>
 
 </template>
@@ -36,17 +27,6 @@ export default {
   },
   data () {
     return {
-      activeIndex: -1, // 当前播放歌曲角标
-      songlistShow: false, // 播放列表显示或隐藏
-      playSwitch: true,
-      totalTime: '00:00',
-      now: '00:00',
-      caonima: null,
-      enable_leftwatcher: false,
-      enable_mobile: false,
-      leftwatcher: '',
-      mobile: '',
-      selectPhonex: null,
       showSetting: false
     }
   },

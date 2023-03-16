@@ -76,12 +76,12 @@ export default {
       editItem: null,
       dialog: {
         STATION: false,
-        CUSTOM_DATA: false,
+        // CUSTOM_DATA: false,
         DCCENTER: false,
         ACCENTER: false,
         ACREMOTE: false,
-        DCREMOTE: false,
-        EMAIL: false
+        DCREMOTE: false
+        // EMAIL: false
       },
       instance: this.$ajax.create({
         baseURL: 'http://power.ieyeplus.com:7001/'

@@ -8,10 +8,14 @@ import power from '@/components/power'
 import currentAlarm from '@/components/alarm/currentAlarm/index'
 import historyAlarm from '@/components/alarm/historyAlarm/index'
 import alarm from '@/components/alarm/index'
+import datamanage from '@/components/data/datamanage/index'
+import tablemanage from '@/components/data/tablemanage/index'
+import data from '@/components/data/index'
 import run from '@/components/run'
 import setting from '@/components/setting/index'
 import treeManager from '@/components/setting/userManage/index'
 import alarmConfig from '@/components/setting/deviceManage/index'
+import dataConfig from '@/components/setting/dataManage/index'
 import login from '@/components/login/index'
 import store from '@/store/index'
 // import { settings } from 'nprogress'
@@ -52,6 +56,24 @@ const router = new Router({
               component: historyAlarm
             }
           ]
+        },
+        {
+          path: '/data',
+          name: '用电管理',
+          redirect: '/data/datamanage/index',
+          component: data,
+          children: [
+            {
+              path: '/data/datamanage/index',
+              name: '统计管理',
+              component: datamanage
+            },
+            {
+              path: '/data/tablemanage/index',
+              name: '图表管理',
+              component: tablemanage
+            }
+          ]
         }
       ]
     },
@@ -70,6 +92,11 @@ const router = new Router({
           path: '/setting/deviceManage',
           name: '设备管理',
           component: alarmConfig
+        },
+        {
+          path: '/setting/dataManage',
+          name: '空间管理',
+          component: dataConfig
         }
       ]
     }

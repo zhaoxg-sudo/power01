@@ -3,6 +3,24 @@
       <div class="tableTool">
       <!-- <button type="button" @click="prePlay" class="btn btn-sm btn-info" id="play"><i :class="recordPlay(recordState)" aria-hidden="true"></i>{{recordState}}</button> -->
       <!-- <a download @click="downLoad()" class="btn btn-sm btn-info"><i class="fa fa-cloud-download" aria-hidden="true"></i>导出</a> -->
+      <downloadExcel
+           class = "btn btn-info"
+           :data = "alarmparameter"
+           :fields = "json_fields"
+           :type="fileType"
+           :header="header"
+           :worksheet="workSheet"
+           :before-generate = "setFileName"
+           :name = "name">
+           <!-- 上面可以自定义自己的样式，还可以引用其他组件button -->
+           <a><i class="fa fa-cloud-download" aria-hidden="true"></i>导出Excel</a>
+         </downloadExcel>
+         <label>电源站点&nbsp;&nbsp;&nbsp;&nbsp;</label>
+         <el-select v-model="selectValue" :clearable="true" placeholder="请选择站点" ref="selectTree"  @clear="clearHandle">
+           <el-option :key="selectValue" :value="selectValue" :label="selectValue" style="height: auto;">
+             <el-tree :data="data" :props="defaultProps" node-key="id" :accordion="true" @node-click="handleNodeClick"></el-tree>
+           </el-option>
+         </el-select>
       <div class="operate">
         <form class="form-inline">
           <div class="form-group">
@@ -76,7 +94,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="pageData.pageIndex"
-        :page-sizes="[6, 10, 30, 40]"
+        :page-sizes="[6, 10, 15, 40]"
         :page-size="pageData.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pageData.total">
@@ -103,6 +121,25 @@ export default {
   name: 'alarm',
   data () {
     return {
+      header: '历史告警数据表',
+      name: 'data',
+      fileType: 'xls',
+      workSheet: '数据表',
+      json_fields: {
+        告警序列号: 'id',
+        告警设备: 'mudid',
+        告警发生时间: 'firedtime',
+        告警详情: 'detail',
+        告警确认: 'confirmedflag',
+        告警确认时间: 'confirmedtime',
+        告警恢复: 'restoreflag',
+        告警恢复信息: 'restoreinfo'
+      },
+      data: [],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
       pageData: {
         total: 0,
         pageIndex: 1,
@@ -110,11 +147,12 @@ export default {
       },
       formData: {
         alarmType: 0,
-        firedTime: '',
+        station: '',
         BeginTime: '',
         EndTime: ''
       },
       value: '',
+      selectValue: '',
       startStamp: {},
       endStamp: {},
       alarmparameter: [
@@ -129,6 +167,20 @@ export default {
   },
   created () {
     this.$nextTick(async () => {
+      this.instance({
+        'url': 'localall',
+        'method': 'get'
+      }).then((res) => {
+        console.log('\ndatamanage get station tree return:')
+        console.log(res.data)
+        this.data = this.getJsonTree(res.data, {
+          id: 'catalogid',
+          pid: 'parentid',
+          children: 'children'
+        })
+        console.log('datamanage生成树data:')
+        console.log(this.data)
+      })
       await this.refresh()
     })
   },
@@ -139,6 +191,17 @@ export default {
   watch: {
   },
   methods: {
+    setFileName () {
+      let date = new Date()
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      let hour = date.getHours()
+      let minute = date.getMinutes()
+      let second = date.getSeconds()
+      let downloadtime = year + '-' + String(month > 9 ? month : ('0' + month)) + '-' + String(day > 9 ? day : ('0' + day)) + '_' + String(hour > 9 ? hour : ('0' + hour)) + ':' + String(minute > 9 ? minute : ('0' + minute)) + ':' + String(second > 9 ? second : ('0' + second))
+      this.name = '历史告警_' + downloadtime
+    },
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
     },
@@ -147,6 +210,18 @@ export default {
       this.pageData.pageIndex = val
       // this.refreshTotal()
       this.refresh()
+    },
+    handleNodeClick (data) {
+      // 配置树形组件点击节点后，设置选择器的值，配置组件的数据
+      this.selectValue = data.label
+      this.formData.station = data.catalogid
+      // 选择器执行完成后，使其失去焦点隐藏下拉框效果
+      this.$refs.selectTree.blur()
+      console.log('当前选中的站点名称：', this.selectValue)
+    },
+    clearHandle () {
+      this.selectValue = ''
+      this.formData.station = ''
     },
     alarmReportFormat (report) {
       let alarmReportTem = {}
@@ -170,7 +245,7 @@ export default {
       let _this = this
       this.formData = Object.assign(this.formData, this.pageData)
       this.instance({
-        'url': '/alarm/historypage/' + this.formData.station + '/' + this.formData.alarmType,
+        'url': '/alarm/historypage/' + this.formData.alarmType,
         data: this.formData,
         'method': 'post'
       }).then((res) => {
@@ -217,7 +292,7 @@ export default {
           let minute = date.getMinutes()
           let second = date.getSeconds()
           let confirmedtime = year + '-' + String(month > 9 ? month : ('0' + month)) + '-' + String(day > 9 ? day : ('0' + day)) + ' ' + String(hour > 9 ? hour : ('0' + hour)) + ':' + String(minute > 9 ? minute : ('0' + minute)) + ':' + String(second > 9 ? second : ('0' + second))
-          console.log('告警确任要修改的一条history数据=========', toHistoryAlarm)
+          console.log('告警确认要修改的一条history数据=========', toHistoryAlarm)
           toHistoryAlarm.alarmid = toHistoryAlarm.id
           toHistoryAlarm.alarmstation = toHistoryAlarm.station
           toHistoryAlarm.alarmmudid = toHistoryAlarm.mudid
@@ -362,6 +437,26 @@ export default {
       }
       // 查询历史告警
       this.refresh()
+    },
+    getJsonTree (data, config) {
+      let id = config.id || 'id'
+      let pid = config.pid || 'pid'
+      let children = config.children || 'children'
+      let idMap = []
+      let jsonTree = []
+      data.forEach(function (v) {
+        idMap[v[id]] = v
+      })
+      data.forEach(function (v) {
+        let parent = idMap[v[pid]]
+        if (parent) {
+          !parent[children] && (parent[children] = [])
+          parent[children].push(v)
+        } else {
+          jsonTree.push(v)
+        }
+      })
+      return jsonTree
     }
   }
 }
@@ -418,5 +513,48 @@ export default {
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
+  }
+// .tableTool {
+  .el-input input {
+  color: #5bc0de!important;
+}
+.el-input__inner {
+  color: #888!important;
+}
+.el-range-input {
+  color: #5bc0de!important;
+}
+.el-tree-node__label {
+  color: #409eee
+// }
+}
+.selected {
+    border-color: #000;
+    background: url(/static/img/jiaobiao04.fw.2d8fb46.png) no-repeat bottom right #aaaaaa;
+}
+.el-scrollbar .el-scrollbar__view .el-select-dropdown__item{
+    height: auto;
+    max-height: 274px;
+    padding: 0;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+  .el-select-dropdown__item.selected{
+    font-weight: normal;
+  }
+  ul li >>>.el-tree .el-tree-node__content{
+    height:auto;
+    padding: 0 20px;
+  }
+  .el-tree-node__label{
+    font-weight: normal;
+  }
+  .el-tree >>>.is-current .el-tree-node__label{
+    color: #409EFF;
+    font-weight: 700;
+  }
+  .el-tree >>>.is-current .el-tree-node__children .el-tree-node__label{
+    color:#606266;
+    font-weight: normal;
   }
 </style>
